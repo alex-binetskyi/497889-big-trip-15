@@ -1,7 +1,7 @@
 # Проект «Большое путешествие»
 
 * Студент: [Alex Binetskyi](https://up.htmlacademy.ru/ecmascript/15/user/497889).
-* Наставник: `Владимир Артюхов`.
+* Наставник: [Владимир Артюхов](https://htmlacademy.ru/profile/artman).
 
 ---
 
