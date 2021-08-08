@@ -4,4 +4,4 @@ export const TIME = {
   MINUTE: 60,
   HOUR: 24,
   DAY: 7,
-}
+};
