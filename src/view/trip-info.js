@@ -8,7 +8,7 @@ const writePath = (places) => {
   let path = '';
 
   if(places.length > 3) {
-    path = `${places[0]} — ... — ${places[places.length - 1]}`
+    path = `${places[0]} — ... — ${places[places.length - 1]}`;
   } else {
     for(let i = 0; i < places.length; i++) {
       if (i === places.length - 1) {
