@@ -43,7 +43,7 @@ const generateEventOffers = (eventType) => {
     train: {
       offers: [
         {
-          'title': 'Book a taxi at the arrival point-undefined',
+          'title': 'Book a taxi at the arrival to point',
           'price': 100,
           'isSelected': Boolean(getRandomInteger(0, 1)),
         },

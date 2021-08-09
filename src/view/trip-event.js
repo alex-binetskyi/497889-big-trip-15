@@ -1,23 +1,18 @@
-import { formatDate } from '../utils';
 import { formatDifferenceDates } from '../utils';
 
 const renderOffers = (offers) => {
   if(offers.length > 0) {
     const selectedOffers = offers.filter((offer) => offer.isSelected === true).map((offer) => {
       const {title, price} = offer;
-      const template = `
-         <li class="event__offer">
-           <span class="event__offer-title">${title}</span>
-           +€&nbsp;
-           <span class="event__offer-price">${price}</span>
-         </li>
-      `;
+      const template = `<li class="event__offer">
+        <span class="event__offer-title">${title}</span>
+        +€&nbsp;
+        <span class="event__offer-price">${price}</span>
+      </li>`;
       return template;
     }).join('');
-    const renderedOffers = `
-      <h4 class="visually-hidden">Offers:</h4>
-      <ul class="event__selected-offers">${selectedOffers}</ul>
-    `;
+    const renderedOffers = `<h4 class="visually-hidden">Offers:</h4>
+      <ul class="event__selected-offers">${selectedOffers}</ul>`;
     return renderedOffers;
   } else {
     return '';
@@ -29,16 +24,16 @@ const createTripEventTempate = (event) => {
   const { base_price: price, date_from: dateFrom, date_to: dateTo, destination, is_favorite: isFavorite, offers, type } = event;
   const eventItem = `<li class="trip-events__item">
     <div class="event">
-      <time class="event__date" datetime="${formatDate(dateFrom, 'YYYY-MM-DD')}">${formatDate(dateFrom, 'MMM-D')}</time>
+      <time class="event__date" datetime="${dateFrom.format('YYYY-MM-DD')}">${dateFrom.format('MMM-D')}</time>
       <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
       </div>
       <h3 class="event__title">${type} ${destination.name}</h3>
       <div class="event__schedule">
         <p class="event__time">
-          <time class="event__start-time" datetime="${formatDate(dateFrom, 'YYYY-MM-DD HH:mm')}">${formatDate(dateFrom, 'HH:mm')}</time>
+          <time class="event__start-time" datetime="${dateFrom.format('YYYY-MM-DD HH:mm')}">${dateFrom.format('HH:mm')}</time>
           —
-          <time class="event__end-time" datetime="${formatDate(dateTo, 'YYYY-MM-DD HH:mm')}">${formatDate(dateTo, 'HH:mm')}</time>
+          <time class="event__end-time" datetime="${dateTo.format('YYYY-MM-DD HH:mm')}">${dateTo.format('HH:mm')}</time>
         </p>
         <p class="event__duration">${formatDifferenceDates(dateFrom, dateTo)}</p>
       </div>

@@ -1,12 +1,10 @@
-import { getRandomInteger } from '../utils';
-import { getRandomDate } from '../utils';
-import { addDayGap } from '../utils';
+import { getRandomInteger, getRandomDate, addDayGap } from '../utils';
+import { TYPES } from '../const';
 import { generateEventOffers } from './event-offers';
 import { generateEventDestination } from './event-destination';
 
 const EVENTS_QUANTITY = 15;
 const MOCK_EVENTS = [];
-const TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
 for(let i = 0; i <= EVENTS_QUANTITY; i++) {
   const event = {};
@@ -27,7 +25,4 @@ for(let i = 0; i <= EVENTS_QUANTITY; i++) {
   MOCK_EVENTS.push(event);
 }
 
-export {
-  MOCK_EVENTS,
-  TYPES
-};
+export { MOCK_EVENTS };

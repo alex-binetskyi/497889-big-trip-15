@@ -5,3 +5,5 @@ export const TIME = {
   HOUR: 24,
   DAY: 7,
 };
+
+export const TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];

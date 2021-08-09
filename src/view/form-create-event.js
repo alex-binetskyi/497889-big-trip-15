@@ -1,11 +1,6 @@
-import { formatDate } from '../utils';
-import { TYPES } from '../mock/events';
+import { TYPES } from '../const';
 import { TOWNS } from '../mock/event-destination';
-import { renderTypes } from '../utils';
-import { renderDestinations } from '../utils';
-import { renderOffers } from '../utils';
-import { renderImages } from '../utils';
-
+import { renderTypes, renderDestinations, renderOffers, renderImages } from './view-utils';
 
 const createFormCreateEventTemplate = (event) => {
   const { base_price: price, date_from: dateFrom, date_to: dateTo, destination, id, offers, type } = event;
@@ -41,10 +36,10 @@ const createFormCreateEventTemplate = (event) => {
 
 				<div class="event__field-group  event__field-group--time">
 					<label class="visually-hidden" for="event-start-time-${id}">From</label>
-					<input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value="${formatDate(dateFrom, 'YY/MM/DD HH:MM')}">
+					<input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value="${dateFrom.format('YY/MM/DD HH:MM')}">
 					—
 					<label class="visually-hidden" for="event-end-time-${id}">To</label>
-					<input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value="${formatDate(dateTo, 'YY/MM/DD HH:MM')}">
+					<input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value="${dateTo.format('YY/MM/DD HH:MM')}">
 				</div>
 
 				<div class="event__field-group  event__field-group--price">
@@ -77,7 +72,6 @@ const createFormCreateEventTemplate = (event) => {
 
   return formEventTemplate;
 };
-
 
 export { createFormCreateEventTemplate };
 

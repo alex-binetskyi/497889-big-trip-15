@@ -13,11 +13,8 @@ for(let i = 0; i < MOCK_EVENTS.length; i++) {
   events += eventItem;
 }
 
-
-const createTripEventListTemplate = () => (`
-  <ul class="trip-events__list">
-    ${events}
-  </ul>
-`);
+const createTripEventListTemplate = () => (`<ul class="trip-events__list">
+  ${events}
+</ul>`);
 
 export { createTripEventListTemplate };

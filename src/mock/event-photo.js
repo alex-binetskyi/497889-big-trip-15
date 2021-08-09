@@ -1,18 +1,19 @@
-import { getRandomInteger } from '../utils';
-import { getRandomString } from '../utils';
+import { getRandomInteger, getRandomString } from '../utils';
 
-const PHOTO_MAX = 6;
-const PHOTO_MIN = 0;
-const PHOTO_BASEURL = 'http://picsum.photos/248/152?r=';
-const ALT = 'Lorem ipsum dolor sit amet consectetur adipiscing elit';
+const Picture = {
+  MAX: 6,
+  MIN: 0,
+  BASEURL: 'http://picsum.photos/248/152?r=',
+  ALT: 'Lorem ipsum dolor sit amet consectetur adipiscing elit',
+};
 
 const generateEventPhotos = () => {
-  const photoQuantity = getRandomInteger(PHOTO_MIN, PHOTO_MAX);
+  const photoQuantity = getRandomInteger(Picture.MIN, Picture.MAX);
   const photos = [];
   for(let i = 0; i <= photoQuantity; i++) {
     const photo = {};
-    photo.src = PHOTO_BASEURL + getRandomInteger(0, 1000);
-    photo.description = getRandomString(ALT, ' ');
+    photo.src = Picture.BASEURL + getRandomInteger(0, 1000);
+    photo.description = getRandomString(Picture.ALT, ' ');
     photos.push(photo);
   }
   return photos;
