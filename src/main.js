@@ -5,11 +5,7 @@ import {createTripCostTemplate} from './view/trip-cost.js';
 import {createTripFiltersTemplate} from './view/trip-filters.js';
 import {createTripSortTemplate} from './view/trip-sort.js';
 import {createTripEventListTemplate} from './view/trip-events-list.js';
-import {createFormCreateEventTemplate} from './view/form-create-event.js';
 // import {createFormEditEventTemplate} from './view/form-edit-event.js';
-import {createTripEventTemplate} from './view/trip-event.js';
-
-const EVENTS = 3;
 
 const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
@@ -26,9 +22,3 @@ render(siteTripControlsSection, createTripFiltersTemplate(), 'beforeend');
 const siteTripEvents = document.querySelector('.trip-events');
 render(siteTripEvents, createTripSortTemplate(), 'beforeend');
 render(siteTripEvents, createTripEventListTemplate(), 'beforeend');
-const siteTripEventsList = document.querySelector('.trip-events__list');
-render(siteTripEventsList, createFormCreateEventTemplate(), 'beforeend');
-
-for (let i = 0; i < EVENTS; i++) {
-  render(siteTripEventsList, createTripEventTemplate(), 'beforeend');
-}
