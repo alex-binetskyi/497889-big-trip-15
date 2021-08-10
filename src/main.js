@@ -1,24 +1,25 @@
-import {createMenuTemplate} from './view/menu.js';
-import {createTripInfoSectionTemplate} from './view/trip-info-section.js';
-import {createTripInfoTemplate} from './view/trip-info.js';
-import {createTripCostTemplate} from './view/trip-cost.js';
-import {createTripFiltersTemplate} from './view/trip-filters.js';
-import {createTripSortTemplate} from './view/trip-sort.js';
-import {createTripEventListTemplate} from './view/trip-events-list.js';
-// import {createFormEditEventTemplate} from './view/form-edit-event.js';
+import MenuView from './view/menu.js';
+import TripInfoSectionView from './view/trip-info-section.js';
+import TripInfoView from './view/trip-info.js';
+import TripCostView from './view/trip-cost.js';
+import TripFiltersView from './view/trip-filters.js';
+import TripSortView from './view/trip-sort.js';
 
-const render = (container, template, place) => {
-  container.insertAdjacentHTML(place, template);
-};
+import TripEventListView from './view/trip-events-list.js';
+// import {createFormEditEventTemplate} from './view/form-edit-event.js';
+import {renderTemplate, renderElement, RenderPosition} from './utils.js';
 
 const siteTripMain = document.querySelector('.trip-main');
-render(siteTripMain, createTripInfoSectionTemplate(), 'afterbegin');
+renderElement(siteTripMain, new TripInfoSectionView().getElement(), RenderPosition.AFTERBEGIN);
+
 const siteTripInfoSection = document.querySelector('.trip-info');
-render(siteTripInfoSection, createTripInfoTemplate(), 'beforeend');
-render(siteTripInfoSection, createTripCostTemplate(), 'beforeend');
+renderElement(siteTripInfoSection, new TripInfoView().getElement(), RenderPosition.BEFOREEND);
+renderElement(siteTripInfoSection, new TripCostView().getElement(), RenderPosition.BEFOREEND);
+
 const siteTripControlsSection = document.querySelector('.trip-controls');
-render(siteTripControlsSection, createMenuTemplate(), 'beforeend');
-render(siteTripControlsSection, createTripFiltersTemplate(), 'beforeend');
+renderElement(siteTripControlsSection, new MenuView().getElement(), RenderPosition.BEFOREEND);
+renderElement(siteTripControlsSection, new TripFiltersView().getElement(), RenderPosition.BEFOREEND);
+
 const siteTripEvents = document.querySelector('.trip-events');
-render(siteTripEvents, createTripSortTemplate(), 'beforeend');
-render(siteTripEvents, createTripEventListTemplate(), 'beforeend');
+renderElement(siteTripEvents, new TripSortView().getElement(), RenderPosition.BEFOREEND);
+renderTemplate(siteTripEvents, new TripEventListView().getElement(), RenderPosition.BEFOREEND);

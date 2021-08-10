@@ -1,4 +1,5 @@
 import { formatDifferenceDates } from '../utils';
+import {createElement} from '../utils.js';
 
 const renderOffers = (offers) => {
   if(offers.length > 0) {
@@ -22,7 +23,7 @@ const renderOffers = (offers) => {
 
 const createTripEventTempate = (event) => {
   const { base_price: price, date_from: dateFrom, date_to: dateTo, destination, is_favorite: isFavorite, offers, type } = event;
-  const eventItem = `<li class="trip-events__item">
+  return `<li class="trip-events__item">
     <div class="event">
       <time class="event__date" datetime="${dateFrom.format('YYYY-MM-DD')}">${dateFrom.format('MMM-D')}</time>
       <div class="event__type">
@@ -52,8 +53,26 @@ const createTripEventTempate = (event) => {
       </button>
     </div>
   </li>`;
-
-  return eventItem;
 };
 
-export { createTripEventTempate };
+export default class TripEvent {
+  constructor(event) {
+    this._event = event;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTripEventTempate(this._event);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
