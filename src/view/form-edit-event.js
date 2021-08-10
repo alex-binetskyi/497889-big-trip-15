@@ -6,7 +6,7 @@ import {createElement} from '../utils.js';
 const createFormEditEventTemplate = (event) => {
   const { base_price: price, date_from: dateFrom, date_to: dateTo, destination, id, offers, type } = event;
   const {description, name} = destination;
-  return = `<li class="trip-events__item">
+  return `<li class="trip-events__item">
 		<form class="event event--edit" action="#" method="post">
 			<header class="event__header">
 				<div class="event__type-wrapper">
