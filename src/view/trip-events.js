@@ -1,5 +1,4 @@
-import { formatDifferenceDates } from '../utils';
-import {createElement} from '../utils.js';
+import { formatDifferenceDates, createElement } from '../utils';
 
 const renderOffers = (offers) => {
   if(offers.length > 0) {
@@ -20,8 +19,7 @@ const renderOffers = (offers) => {
   }
 };
 
-
-const createTripEventTempate = (event) => {
+const createTripEventItemTempate = (event) => {
   const { base_price: price, date_from: dateFrom, date_to: dateTo, destination, is_favorite: isFavorite, offers, type } = event;
   return `<li class="trip-events__item">
     <div class="event">
@@ -55,14 +53,22 @@ const createTripEventTempate = (event) => {
   </li>`;
 };
 
+const createTripEventsTemplate = (events) => {
+  const tripEventsTemplate = events.map((event) => createTripEventItemTempate(event)).join('');
+
+  return `<ul class="trip-events__list">
+    ${tripEventsTemplate}
+  </ul>`;
+};
+
 export default class TripEvent {
-  constructor(event) {
-    this._event = event;
+  constructor(events) {
+    this._events = events;
     this._element = null;
   }
 
   getTemplate() {
-    return createTripEventTempate(this._event);
+    return createTripEventsTemplate(this._events);
   }
 
   getElement() {
