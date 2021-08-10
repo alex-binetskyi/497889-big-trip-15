@@ -7,7 +7,7 @@ import TripSortView from './view/trip-sort.js';
 
 import TripEventListView from './view/trip-events-list.js';
 // import {createFormEditEventTemplate} from './view/form-edit-event.js';
-import {renderTemplate, renderElement, RenderPosition} from './utils.js';
+import {renderElement, RenderPosition} from './utils.js';
 
 const siteTripMain = document.querySelector('.trip-main');
 renderElement(siteTripMain, new TripInfoSectionView().getElement(), RenderPosition.AFTERBEGIN);
@@ -22,4 +22,4 @@ renderElement(siteTripControlsSection, new TripFiltersView().getElement(), Rende
 
 const siteTripEvents = document.querySelector('.trip-events');
 renderElement(siteTripEvents, new TripSortView().getElement(), RenderPosition.BEFOREEND);
-renderTemplate(siteTripEvents, new TripEventListView().getTemplate(), RenderPosition.BEFOREEND);
+renderElement(siteTripEvents, new TripEventListView().getElement(), RenderPosition.BEFOREEND);
