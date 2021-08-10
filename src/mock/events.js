@@ -3,10 +3,10 @@ import { TYPES } from '../const';
 import { generateEventOffers } from './event-offers';
 import { generateEventDestination } from './event-destination';
 
-const EVENTS_QUANTITY = 15;
+const EVENT_COUNT = 15;
 const MOCK_EVENTS = [];
 
-for(let i = 0; i <= EVENTS_QUANTITY; i++) {
+for(let i = 0; i <= EVENT_COUNT; i++) {
   const event = {};
   if(i > 0) {
     const previousDate = MOCK_EVENTS[i - 1]['date_to'];

@@ -1,11 +1,12 @@
 import { TYPES } from '../const';
 import { TOWNS } from '../mock/event-destination';
 import { renderTypes, renderDestinations, renderOffers } from './view-utils';
+import {createElement} from '../utils.js';
 
 const createFormEditEventTemplate = (event) => {
   const { base_price: price, date_from: dateFrom, date_to: dateTo, destination, id, offers, type } = event;
   const {description, name} = destination;
-  const formEventTemplate = `<li class="trip-events__item">
+  return = `<li class="trip-events__item">
 		<form class="event event--edit" action="#" method="post">
 			<header class="event__header">
 				<div class="event__type-wrapper">
@@ -66,8 +67,26 @@ const createFormEditEventTemplate = (event) => {
 			</section>
 		</form>
 	</li>`;
-
-  return formEventTemplate;
 };
 
-export { createFormEditEventTemplate };
+export default class FormEditEvent {
+  constructor(event) {
+    this._event = event;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createFormEditEventTemplate(this._event);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

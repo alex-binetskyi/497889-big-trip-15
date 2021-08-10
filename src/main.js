@@ -22,4 +22,4 @@ renderElement(siteTripControlsSection, new TripFiltersView().getElement(), Rende
 
 const siteTripEvents = document.querySelector('.trip-events');
 renderElement(siteTripEvents, new TripSortView().getElement(), RenderPosition.BEFOREEND);
-renderTemplate(siteTripEvents, new TripEventListView().getElement(), RenderPosition.BEFOREEND);
+renderTemplate(siteTripEvents, new TripEventListView().getTemplate(), RenderPosition.BEFOREEND);
