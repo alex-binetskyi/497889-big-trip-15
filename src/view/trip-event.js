@@ -19,7 +19,8 @@ const renderOffers = (offers) => {
   }
 };
 
-const createTripEventItemTempate = (event) => {
+
+const createTripEventTempate = (event) => {
   const { base_price: price, date_from: dateFrom, date_to: dateTo, destination, is_favorite: isFavorite, offers, type } = event;
   return `<li class="trip-events__item">
     <div class="event">
@@ -53,22 +54,14 @@ const createTripEventItemTempate = (event) => {
   </li>`;
 };
 
-const createTripEventsTemplate = (events) => {
-  const tripEventsTemplate = events.map((event) => createTripEventItemTempate(event)).join('');
-
-  return `<ul class="trip-events__list">
-    ${tripEventsTemplate}
-  </ul>`;
-};
-
 export default class TripEvent {
-  constructor(events) {
-    this._events = events;
+  constructor(event) {
+    this._event = event;
     this._element = null;
   }
 
   getTemplate() {
-    return createTripEventsTemplate(this._events);
+    return createTripEventTempate(this._event);
   }
 
   getElement() {
