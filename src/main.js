@@ -13,22 +13,9 @@ import TripEventView from './view/trip-event.js';
 import FormEditEventView from './view/form-edit-event.js';
 import {render, RenderPosition, reducer} from './utils.js';
 
-const siteTripMain = document.querySelector('.trip-main');
-render(siteTripMain, new TripInfoSectionView().getElement(), RenderPosition.AFTERBEGIN);
-
-const siteTripInfoSection = document.querySelector('.trip-info');
-const towns = MOCK_EVENTS.map((event) => event['destination'].name);
-const price = MOCK_EVENTS.map((event) => event['base_price']).reduce(reducer);
-
-render(siteTripInfoSection, new TripInfoView(towns, MOCK_EVENTS[0]['date_from'], MOCK_EVENTS[MOCK_EVENTS.length -1 ]['date_to']).getElement(), RenderPosition.BEFOREEND);
-render(siteTripInfoSection, new TripCostView(price).getElement(), RenderPosition.BEFOREEND);
-
 const siteTripControlsSection = document.querySelector('.trip-controls');
 render(siteTripControlsSection, new MenuView().getElement(), RenderPosition.BEFOREEND);
 render(siteTripControlsSection, new TripFiltersView().getElement(), RenderPosition.BEFOREEND);
-
-const siteTripEvents = document.querySelector('.trip-events');
-render(siteTripEvents, new TripSortView().getElement(), RenderPosition.BEFOREEND);
 
 
 const renderPoint = (pointListElement, point) => {
@@ -72,15 +59,25 @@ const renderPoint = (pointListElement, point) => {
   render(pointListElement, pointComponent.getElement(), RenderPosition.BEFOREEND);
 };
 
-const eventsListComponent = new TripEventListView();
-render(siteTripEvents, eventsListComponent.getElement(), RenderPosition.BEFOREEND);
+const siteTripEvents = document.querySelector('.trip-events');
 
-for (let i = 0; i < MOCK_EVENTS.length; i++) {
-  renderPoint(eventsListComponent.getElement(), MOCK_EVENTS[i]);
-}
 
-if(MOCK_EVENTS.length === 0) {
+if(MOCK_EVENTS.length) {
+  const siteTripMain = document.querySelector('.trip-main');
+  render(siteTripMain, new TripInfoSectionView().getElement(), RenderPosition.AFTERBEGIN);
+  const siteTripInfoSection = document.querySelector('.trip-info');
+  const towns = MOCK_EVENTS.map((event) => event['destination'].name);
+  const price = MOCK_EVENTS.map((event) => event['base_price']).reduce(reducer);
+  render(siteTripInfoSection, new TripInfoView(towns, MOCK_EVENTS[0]['date_from'], MOCK_EVENTS[MOCK_EVENTS.length -1 ]['date_to']).getElement(), RenderPosition.BEFOREEND);
+  render(siteTripInfoSection, new TripCostView(price).getElement(), RenderPosition.BEFOREEND);
+
+  render(siteTripEvents, new TripSortView().getElement(), RenderPosition.BEFOREEND);
+  const eventsListComponent = new TripEventListView();
+  render(siteTripEvents, eventsListComponent.getElement(), RenderPosition.BEFOREEND);
+
+  for (let i = 0; i < MOCK_EVENTS.length; i++) {
+    renderPoint(eventsListComponent.getElement(), MOCK_EVENTS[i]);
+  }
+} else {
   render(siteTripEvents, new TripEventListEmptyView().getElement(), RenderPosition.BEFOREEND);
 }
-
-
