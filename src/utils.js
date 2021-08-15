@@ -11,7 +11,7 @@ export const RenderPosition = {
   BEFOREEND: 'beforeend',
 };
 
-export const renderElement = (container, element, place) => {
+export const render = (container, element, place) => {
   switch (place) {
     case RenderPosition.AFTERBEGIN:
       container.prepend(element);
@@ -23,10 +23,10 @@ export const renderElement = (container, element, place) => {
 };
 
 export const createElement = (template) => {
-  const newElement = document.createElement('div'); // 1
-  newElement.innerHTML = template; // 2
+  const newElement = document.createElement('div');
+  newElement.innerHTML = template;
 
-  return newElement.firstChild; // 3
+  return newElement.firstChild;
 };
 
 const getRandomInteger = (a = 0, b = 1) => {
@@ -83,10 +83,13 @@ const formatDifferenceDates = (dateFrom, dateTo) => {
   return formatDifference;
 };
 
+const reducer = (accumulator, currentValue) => accumulator + currentValue;
+
 export {
   getRandomInteger,
   getRandomString,
   getRandomDate,
   addDayGap,
-  formatDifferenceDates
+  formatDifferenceDates,
+  reducer
 };

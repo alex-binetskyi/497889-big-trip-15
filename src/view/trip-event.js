@@ -1,5 +1,4 @@
-import { formatDifferenceDates } from '../utils';
-import {createElement} from '../utils.js';
+import { formatDifferenceDates, createElement } from '../utils';
 
 const renderOffers = (offers) => {
   if(offers.length > 0) {

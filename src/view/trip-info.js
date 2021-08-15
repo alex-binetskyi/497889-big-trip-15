@@ -1,44 +1,23 @@
-import { MOCK_EVENTS } from '../mock/events';
-import {createElement} from '../utils.js';
+import {createElement} from '../utils';
+import { renderTripPath } from './view-utils';
 
-const towns = MOCK_EVENTS.map((event) => event['destination'].name);
-const writePath = (places) => {
-  let path = '';
-
-  if(places.length > 3) {
-    path = `${places[0]} — ... — ${places[places.length - 1]}`;
-  } else {
-    for(let i = 0; i < places.length; i++) {
-      if (i === places.length - 1) {
-        path += places[i];
-      } else {
-        path += `${places[i]} — `;
-      }
-    }
-  }
-
-  return path;
-};
-
-const writeDates = (dateFrom, dateTo) => {
-  const date = `${dateFrom.format('MMM D')} — ${dateTo.format('MMM D')}`;
-  return date;
-};
-
-const createTripInfoTemplate = () => (
+const createTripInfoTemplate = (towns, dateFrom, dateTo) => (
   `<div class="trip-info__main">
-    <h1 class="trip-info__title">${writePath(towns)}</h1>
-    <p class="trip-info__dates">${writeDates(MOCK_EVENTS[0]['date_from'], MOCK_EVENTS[MOCK_EVENTS.length -1 ]['date_to'])}</p>
-  </div>`
+    <h1 class="trip-info__title">${renderTripPath(towns)}</h1>  
+    <p class="trip-info__dates">${dateFrom.format('MMM D')} — ${dateTo.format('MMM D')}</p>
+    </div>`
 );
 
 export default class TripInfo {
-  constructor() {
+  constructor(towns, dateFrom, dateTo) {
     this._element = null;
+    this._towns = towns;
+    this._dateFrom = dateFrom;
+    this._dateTo = dateTo;
   }
 
   getTemplate() {
-    return createTripInfoTemplate();
+    return createTripInfoTemplate(this._towns, this._dateFrom, this._dateTo);
   }
 
   getElement() {

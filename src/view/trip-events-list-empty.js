@@ -1,7 +1,7 @@
 import {createElement} from '../utils.js';
 
-export const createTripEventsListTemplate = () => (
-  '<ul class="trip-events__list"></ul>'
+export const createTripEventsListEmptyTemplate = () => (
+  '<p class="trip-events__msg">Click New Event to create your first point</p>'
 );
 
 export default class TripFilters {
@@ -10,7 +10,7 @@ export default class TripFilters {
   }
 
   getTemplate() {
-    return createTripEventsListTemplate();
+    return createTripEventsListEmptyTemplate();
   }
 
   getElement() {
