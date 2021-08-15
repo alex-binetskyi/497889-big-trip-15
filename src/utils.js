@@ -83,10 +83,13 @@ const formatDifferenceDates = (dateFrom, dateTo) => {
   return formatDifference;
 };
 
+const reducer = (accumulator, currentValue) => accumulator + currentValue;
+
 export {
   getRandomInteger,
   getRandomString,
   getRandomDate,
   addDayGap,
-  formatDifferenceDates
+  formatDifferenceDates,
+  reducer
 };

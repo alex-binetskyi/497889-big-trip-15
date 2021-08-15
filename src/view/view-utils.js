@@ -1,3 +1,20 @@
+const renderTripPath = (places) => {
+  let path = '';
+
+  if(places.length > 3) {
+    path = `${places[0]} — ... — ${places[places.length - 1]}`;
+  } else {
+    for(let i = 0; i < places.length; i++) {
+      if (i === places.length - 1) {
+        path += places[i];
+      } else {
+        path += `${places[i]} — `;
+      }
+    }
+  }
+
+  return path;
+};
 
 const formatOfferLabel = (string) => {
   const formatedStrind = string.toLowerCase().replace('/ /g', '-');
@@ -66,5 +83,6 @@ export {
   renderTypes,
   renderDestinations,
   renderOffers,
-  renderImages
+  renderImages,
+  renderTripPath
 };

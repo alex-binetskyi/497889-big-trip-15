@@ -11,14 +11,17 @@ import TripEventListEmptyView from './view/trip-events-list-empty.js';
 import TripEventView from './view/trip-event.js';
 // import FormCreateEventView from './view/form-create-event.js';
 import FormEditEventView from './view/form-edit-event.js';
-import {render, RenderPosition} from './utils.js';
+import {render, RenderPosition, reducer} from './utils.js';
 
 const siteTripMain = document.querySelector('.trip-main');
 render(siteTripMain, new TripInfoSectionView().getElement(), RenderPosition.AFTERBEGIN);
 
 const siteTripInfoSection = document.querySelector('.trip-info');
-render(siteTripInfoSection, new TripInfoView().getElement(), RenderPosition.BEFOREEND);
-render(siteTripInfoSection, new TripCostView().getElement(), RenderPosition.BEFOREEND);
+const towns = MOCK_EVENTS.map((event) => event['destination'].name);
+const price = MOCK_EVENTS.map((event) => event['base_price']).reduce(reducer);
+
+render(siteTripInfoSection, new TripInfoView(towns, MOCK_EVENTS[0]['date_from'], MOCK_EVENTS[MOCK_EVENTS.length -1 ]['date_to']).getElement(), RenderPosition.BEFOREEND);
+render(siteTripInfoSection, new TripCostView(price).getElement(), RenderPosition.BEFOREEND);
 
 const siteTripControlsSection = document.querySelector('.trip-controls');
 render(siteTripControlsSection, new MenuView().getElement(), RenderPosition.BEFOREEND);
@@ -79,4 +82,5 @@ for (let i = 0; i < MOCK_EVENTS.length; i++) {
 if(MOCK_EVENTS.length === 0) {
   render(siteTripEvents, new TripEventListEmptyView().getElement(), RenderPosition.BEFOREEND);
 }
+
 
