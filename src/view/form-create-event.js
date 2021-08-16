@@ -1,7 +1,7 @@
-import { TYPES } from '../const';
+import AbstractView from './abstract.js';
+import { TYPES } from '../const.js';
 import { TOWNS } from '../mock/event-destination';
 import { renderTypes, renderDestinations, renderOffers, renderImages } from './view-utils';
-import {createElement} from '../utils.js';
 
 const createFormCreateEventTemplate = (event) => {
   const { base_price: price, date_from: dateFrom, date_to: dateTo, destination, id, offers, type } = event;
@@ -72,24 +72,13 @@ const createFormCreateEventTemplate = (event) => {
 	</li>`;
 };
 
-export default class FormCreateEvent {
+export default class FormCreateEvent extends AbstractView {
   constructor(event) {
+    super();
     this._event = event;
-    this._element = null;
   }
 
   getTemplate() {
     return createFormCreateEventTemplate(this._event);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

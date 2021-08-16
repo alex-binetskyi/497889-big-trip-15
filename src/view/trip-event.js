@@ -1,4 +1,5 @@
-import { formatDifferenceDates, createElement } from '../utils';
+import AbstractView from './abstract.js';
+import { formatDifferenceDates } from '../utils/event';
 
 const renderOffers = (offers) => {
   if(offers.length > 0) {
@@ -54,24 +55,24 @@ const createTripEventTempate = (event) => {
   </li>`;
 };
 
-export default class TripEvent {
+export default class TripEvent extends AbstractView {
   constructor(event) {
+    super();
     this._event = event;
-    this._element = null;
+    this._onButtonClick = this._onButtonClick.bind(this);
   }
 
   getTemplate() {
     return createTripEventTempate(this._event);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
+  setOnButtonClick(callback) {
+    this._callback.onClick = callback;
+    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._onButtonClick);
   }
 
-  removeElement() {
-    this._element = null;
+  _onButtonClick(evt) {
+    evt.preventDefault();
+    this._callback.onClick();
   }
 }
