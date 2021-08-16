@@ -1,4 +1,5 @@
-import { getRandomInteger, getRandomString } from '../utils';
+import { getRandomInteger } from '../utils/common';
+import { getRandomString } from '../utils/event';
 import { generateEventPhotos } from './event-photo';
 
 const TOWNS = ['Cairo', 'McMurdo', 'Tokyo', 'Dublin', 'Rio de Janeiro', 'Venice', 'Paris', 'Tbilisi', 'Sydney', 'Chernobyl'];

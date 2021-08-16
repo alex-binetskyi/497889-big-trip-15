@@ -1,4 +1,5 @@
-import { getRandomInteger, getRandomString } from '../utils';
+import { getRandomInteger } from '../utils/common';
+import { getRandomString } from '../utils/event';
 
 const Picture = {
   MAX: 6,

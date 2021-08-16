@@ -1,7 +1,7 @@
+import AbstractView from './abstract.js';
 import { TYPES } from '../const';
 import { TOWNS } from '../mock/event-destination';
 import { renderTypes, renderDestinations, renderOffers } from './view-utils';
-import {createElement} from '../utils.js';
 
 const createFormEditEventTemplate = (event) => {
   const { base_price: price, date_from: dateFrom, date_to: dateTo, destination, id, offers, type } = event;
@@ -69,24 +69,35 @@ const createFormEditEventTemplate = (event) => {
 	</li>`;
 };
 
-export default class FormEditEvent {
+export default class FormEditEvent extends AbstractView {
   constructor(event) {
+    super();
     this._event = event;
-    this._element = null;
+    this._onButtonClick = this._onButtonClick.bind(this);
+    this._onFormSubmit = this._onFormSubmit.bind(this);
   }
 
   getTemplate() {
     return createFormEditEventTemplate(this._event);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
+  setOnFormSubmit(callback) {
+    this._callback.onSubmit = callback;
+    this.getElement().addEventListener('submit', this._onFormSubmit);
   }
 
-  removeElement() {
-    this._element = null;
+  setOnButtonClick(callback) {
+    this._callback.onClick = callback;
+    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._onButtonClick);
+  }
+
+  _onButtonClick(evt) {
+    evt.preventDefault();
+    this._callback.onClick();
+  }
+
+  _onFormSubmit(evt) {
+    evt.preventDefault();
+    this._callback.onSubmit();
   }
 }

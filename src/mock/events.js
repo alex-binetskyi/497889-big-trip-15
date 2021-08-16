@@ -1,4 +1,5 @@
-import { getRandomInteger, getRandomDate, addDayGap } from '../utils';
+import { getRandomInteger } from '../utils/common';
+import { getRandomDate, addDayGap } from '../utils/event';
 import { TYPES } from '../const';
 import { generateEventOffers } from './event-offers';
 import { generateEventDestination } from './event-destination';
