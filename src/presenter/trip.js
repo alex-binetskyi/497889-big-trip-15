@@ -48,7 +48,7 @@ export default class Trip {
   _renderEvent(event) {
     const point = new EventPresenter(this._eventsListComponent, this._handleEventChange, this._handleModeChange);
     point.init(event);
-    this._eventPresenter.set(event.id, EventPresenter);
+    this._eventPresenter.set(event.id, point);
   }
 
   _renderEvents() {

@@ -99,7 +99,7 @@ export default class EventPresenter {
         {},
         this._event,
         {
-          isFavorite: !this._event['is_favorite'],
+          isFavorite: !this._event.isFavorite,
         },
       ),
     );
