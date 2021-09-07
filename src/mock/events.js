@@ -10,13 +10,13 @@ const MOCK_EVENTS = [];
 for(let i = 0; i < EVENT_COUNT; i++) {
   const event = {};
   if(i > 0) {
-    const previousDate = MOCK_EVENTS[i - 1]['date_to'];
-    event['date_from'] = previousDate;
+    const previousDate = MOCK_EVENTS[i - 1]['dateTo'];
+    event['dateFrom'] = previousDate;
   } else {
-    event['date_from'] = getRandomDate();
+    event['dateFrom'] = getRandomDate();
   }
-  event['base_price'] = getRandomInteger(3, 20) * 100;
-  event['date_to'] =  addDayGap(event['date_from']);
+  event['basePrice'] = getRandomInteger(3, 20) * 100;
+  event['dateTo'] =  addDayGap(event['dateFrom']);
   event['destination'] = generateEventDestination();
   event['id'] = i + 1;
   event.isFavorite = Boolean(getRandomInteger(0, 1));

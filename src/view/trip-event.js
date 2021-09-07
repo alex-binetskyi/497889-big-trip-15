@@ -22,7 +22,7 @@ const renderOffers = (offers) => {
 
 
 const createTripEventTempate = (event) => {
-  const { base_price: price, date_from: dateFrom, date_to: dateTo, destination, isFavorite: isFavorite, offers, type } = event;
+  const { basePrice: price, dateFrom: dateFrom, dateTo: dateTo, destination, isFavorite: isFavorite, offers, type } = event;
   return `<li class="trip-events__item">
     <div class="event">
       <time class="event__date" datetime="${dateFrom.format('YYYY-MM-DD')}">${dateFrom.format('MMM-D')}</time>

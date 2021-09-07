@@ -22,8 +22,8 @@ if(MOCK_EVENTS.length) {
   render(siteTripMain, new TripInfoSectionView(), RenderPosition.AFTERBEGIN);
   const siteTripInfoSection = document.querySelector('.trip-info');
   const towns = MOCK_EVENTS.map((event) => event['destination'].name);
-  const price = MOCK_EVENTS.map((event) => event['base_price']).reduce(reducer);
-  render(siteTripInfoSection, new TripInfoView(towns, MOCK_EVENTS[0]['date_from'], MOCK_EVENTS[MOCK_EVENTS.length -1 ]['date_to']), RenderPosition.BEFOREEND);
+  const price = MOCK_EVENTS.map((event) => event['basePrice']).reduce(reducer);
+  render(siteTripInfoSection, new TripInfoView(towns, MOCK_EVENTS[0]['dateFrom'], MOCK_EVENTS[MOCK_EVENTS.length -1 ]['dateTo']), RenderPosition.BEFOREEND);
   render(siteTripInfoSection, new TripCostView(price), RenderPosition.BEFOREEND);
 }
 

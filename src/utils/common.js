@@ -20,3 +20,6 @@ export const updateItem = (items, update) => {
     ...items.slice(index + 1),
   ];
 };
+
+export const sortByPrice = (a, b) => b.basePrice - a.basePrice;
+export const sortByTime = (a, b) => (b.dateTo - b.dateFrom) - (a.dateTo - a.dateFrom);
