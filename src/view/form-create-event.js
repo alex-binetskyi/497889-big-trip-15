@@ -4,7 +4,7 @@ import { TOWNS } from '../mock/event-destination';
 import { renderTypes, renderDestinations, renderOffers, renderImages } from './view-utils';
 
 const createFormCreateEventTemplate = (event) => {
-  const { base_price: price, date_from: dateFrom, date_to: dateTo, destination, id, offers, type } = event;
+  const { basePrice: price, dateFrom: dateFrom, dateTo: dateTo, destination, id, offers, type } = event;
   const {description, name, pictures} = destination;
   return `<li class="trip-events__item">
 		<form class="event event--edit" action="#" method="post">
