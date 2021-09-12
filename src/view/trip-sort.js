@@ -43,6 +43,7 @@ export default class TripSort extends AbstractView {
   _sortTypeChangeHandler(evt) {
     if (evt.target.tagName === 'INPUT' || evt.target.tagName === 'LABEL') {
       evt.preventDefault();
+      // evt.target.setAttribute('checked', 'checked');
       this._callback.sortTypeChange(evt.target.dataset.sortType);
     }
   }

@@ -35,10 +35,15 @@ const renderTypes = (types, id) => {
 
 const renderDestinations = (towns) => {
   let destinations = '';
+  console.log(towns);
 
   for(const town of towns) {
+    console.log(town);
     const template = `<option value="${town}"></option>`;
+    console.log(template);
     destinations += template;
+    console.log('destinations');
+    console.log(destinations);
   }
   return destinations;
 };

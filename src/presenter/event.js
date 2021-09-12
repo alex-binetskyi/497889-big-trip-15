@@ -1,5 +1,5 @@
 import TripEventView from '../view/trip-event.js';
-import FormEditEventView from '../view/form-edit-event.js';
+import FormEventView from '../view/form-event.js';
 
 import {render, RenderPosition, replace, remove} from '../utils/render.js';
 
@@ -33,7 +33,7 @@ export default class EventPresenter {
     const prevPointEditComponent = this._pointEditComponent;
 
     this._pointComponent = new TripEventView(event); // Отображение события.
-    this._pointEditComponent = new FormEditEventView(event); // Форма изменения события.
+    this._pointEditComponent = new FormEventView(event); // Форма изменения события.
 
     this._pointComponent.setEditClickHandler(this._replaceEventToForm);
     this._pointEditComponent.setEditClickHandler(this._replaceFormToEvent);

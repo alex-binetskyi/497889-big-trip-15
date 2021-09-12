@@ -1,9 +1,11 @@
-import AbstractView from './abstract.js';
+import Smart from './smart.js';
 import { TYPES } from '../const';
 import { TOWNS } from '../mock/event-destination';
 import { renderTypes, renderDestinations, renderOffers } from './view-utils';
+import { MOCK_EVENTS } from '../mock/events.js';
+import { mathcTypeOffer } from '../utils/form';
 
-const createFormEditEventTemplate = (event) => {
+const createFormEventTemplate = (event) => {
   const { basePrice: price, dateFrom: dateFrom, dateTo: dateTo, destination, id, offers, type } = event;
   const {description, name} = destination;
   return `<li class="trip-events__item">
@@ -69,10 +71,12 @@ const createFormEditEventTemplate = (event) => {
 	</li>`;
 };
 
-export default class FormEditEvent extends AbstractView {
+export default class FormEvent extends Smart {
   constructor(event) {
     super();
     this._event = event;
+
+    this._eventTypeSelectHandler = this._eventTypeSelectHandler.bind(this);
 
     this._editClickHandler = this._editClickHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
@@ -80,7 +84,17 @@ export default class FormEditEvent extends AbstractView {
   }
 
   getTemplate() {
-    return createFormEditEventTemplate(this._event);
+    return createFormEventTemplate(this._event);
+  }
+
+  _eventTypeSelectHandler(evt) {
+    evt.preventDefault();
+    const value = evt.target.parentElement.querySelector('input').value;
+
+    this.updateData({
+      type: value,
+      offers: mathcTypeOffer(value, MOCK_EVENTS),
+    });
   }
 
   _editClickHandler(evt) {
@@ -112,5 +126,18 @@ export default class FormEditEvent extends AbstractView {
   setDeleteClickHandler(callback) {
     this._callback.deleteSubmit = callback;
     this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._formRemoveHandler);
+  }
+
+  static parseEventToData(event) {
+    return Object.assign(
+      {},
+      event,
+    );
+  }
+
+  static parseDataToEvent(data) {
+    data = Object.assign({}, data);
+
+    return data;
   }
 }
