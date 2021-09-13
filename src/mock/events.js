@@ -7,7 +7,6 @@ import { DESTINATIONS } from './event-destination';
 
 const EVENT_COUNT = 15;
 const MOCK_EVENTS = [];
-// const DESTINATIONS = [];
 
 for(let i = 0; i < EVENT_COUNT; i++) {
   const event = {};
@@ -27,7 +26,5 @@ for(let i = 0; i < EVENT_COUNT; i++) {
   event['offers'] = matchTypeOffers(type, eventOffers);
   MOCK_EVENTS.push(event);
 }
-
-console.log(MOCK_EVENTS);
 
 export { MOCK_EVENTS };
