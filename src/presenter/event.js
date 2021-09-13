@@ -22,6 +22,7 @@ export default class EventPresenter {
     this._replaceEventToForm = this._replaceEventToForm.bind(this);
     this._replaceFormToEvent = this._replaceFormToEvent.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
+    this._handleEditClickRollup = this._handleEditClickRollup.bind(this);
     this._handleEditSubmit = this._handleEditSubmit.bind(this);
     this._removeEditForm = this._removeEditForm.bind(this);
   }
@@ -36,7 +37,7 @@ export default class EventPresenter {
     this._pointEditComponent = new FormEventView(event); // Форма изменения события.
 
     this._pointComponent.setEditClickHandler(this._replaceEventToForm);
-    this._pointEditComponent.setEditClickHandler(this._replaceFormToEvent);
+    this._pointEditComponent.setEditClickHandler(this._handleEditClickRollup);
     this._pointEditComponent.setEditSubmitHandler(this._handleEditSubmit);
     this._pointEditComponent.setDeleteClickHandler(this._removeEditForm);
     this._pointComponent.setFavoriteClickHandler(this._handleFavoriteClick);
@@ -86,9 +87,15 @@ export default class EventPresenter {
     this._mode = Mode.DEFAULT;
   }
 
+  _handleEditClickRollup() {
+    this._pointEditComponent.reset(this._event);
+    this._replaceFormToEvent();
+  }
+
   _escKeyDownHandler(evt) {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
+      this._pointEditComponent.reset(this._event);
       this._replaceFormToEvent();
     }
   }
@@ -105,7 +112,8 @@ export default class EventPresenter {
     );
   }
 
-  _handleEditSubmit() {
+  _handleEditSubmit(event) {
+    this._changeData(event);
     this._replaceFormToEvent();
   }
 }

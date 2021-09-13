@@ -1,4 +1,9 @@
-export const mathcTypeOffer = (type, offers) => {
-  const match = offers.find((offer) => type === offer.type).offers;
-  return match.offers;
+export const matchTypeOffers = (type, eventOffers) => {
+  const match = eventOffers.find((offer) => type === offer.type).offers;
+  return match;
+};
+
+export const matchCity = (cityValue, cities) => {
+  const match = cities.find((city) => cityValue === city.name);
+  return match;
 };

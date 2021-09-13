@@ -17,7 +17,7 @@ const renderTripPath = (places) => {
 };
 
 const formatOfferLabel = (string) => {
-  const formatedStrind = string.toLowerCase().replace('/ /g', '-');
+  const formatedStrind = (string.toLowerCase().replace(/[_, ]+/g, '-'));
   return formatedStrind;
 };
 
@@ -25,8 +25,8 @@ const renderTypes = (types, id) => {
   let optionTypes = '';
   for(const type of types) {
     const template = `<div class="event__type-item">
-      <input id="event-type-${type}-${id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">
-      <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-${id}">${type}</label>
+      <input id="event-type-${type}-${id}" class="event__type-input visually-hidden" type="radio" name="event-type" value="${type}">
+      <label class="event__type-label event__type-label--${type}" for="event-type-${type}-${id}">${type}</label>
     </div>`;
     optionTypes += template;
   }
@@ -35,16 +35,12 @@ const renderTypes = (types, id) => {
 
 const renderDestinations = (towns) => {
   let destinations = '';
-  console.log(towns);
 
   for(const town of towns) {
-    console.log(town);
     const template = `<option value="${town}"></option>`;
-    console.log(template);
     destinations += template;
-    console.log('destinations');
-    console.log(destinations);
   }
+
   return destinations;
 };
 
@@ -53,7 +49,7 @@ const renderOffers = (offers, id) => {
     const formOffers = offers.map((offer) => {
       const {title, price} = offer;
       const template = `<div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-${id}" type="checkbox" name="event-offer-luggage" ${offer.isSelected ? 'checked=""' : ''}>
+        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${formatOfferLabel(title)}-${id}" type="checkbox" name="event-offer-${formatOfferLabel(title)}-${id}" ${offer.isSelected ? 'checked=""' : ''}>
         <label class="event__offer-label" for="event-offer-${formatOfferLabel(title)}-${id}">
           <span class="event__offer-title">${title}</span>
           +€&nbsp;

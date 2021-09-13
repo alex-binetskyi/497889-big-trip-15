@@ -4,8 +4,8 @@ import { SortType } from '../const.js';
 const createTripSortTemplate = () => (
   `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
     <div class="trip-sort__item  trip-sort__item--day">
-      <input id="sort-day" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-day" checked="">
-      <label class="trip-sort__btn" for="sort-day" data-sort-type="${SortType.DAY}">Day</label>
+      <input id="sort-day" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-day" checked="" data-sort-type="${SortType.DAY}">
+      <label class="trip-sort__btn" for="sort-day">Day</label>
     </div>
 
     <div class="trip-sort__item  trip-sort__item--event">
@@ -14,13 +14,13 @@ const createTripSortTemplate = () => (
     </div>
 
     <div class="trip-sort__item  trip-sort__item--time">
-      <input id="sort-time" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-time">
-      <label class="trip-sort__btn" for="sort-time" data-sort-type="${SortType.TIME}">Time</label>
+      <input id="sort-time" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-time" data-sort-type="${SortType.TIME}">
+      <label class="trip-sort__btn" for="sort-time">Time</label>
     </div>
 
     <div class="trip-sort__item  trip-sort__item--price">
-      <input id="sort-price" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-price">
-      <label class="trip-sort__btn" for="sort-price" data-sort-type="${SortType.PRICE}">Price</label>
+      <input id="sort-price" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-price" data-sort-type="${SortType.PRICE}">
+      <label class="trip-sort__btn" for="sort-price">Price</label>
     </div>
 
     <div class="trip-sort__item  trip-sort__item--offer">
@@ -41,9 +41,9 @@ export default class TripSort extends AbstractView {
   }
 
   _sortTypeChangeHandler(evt) {
-    if (evt.target.tagName === 'INPUT' || evt.target.tagName === 'LABEL') {
+    if (evt.target.tagName === 'INPUT') {
       evt.preventDefault();
-      // evt.target.setAttribute('checked', 'checked');
+      // evt.target.setAttribute('checked', '');
       this._callback.sortTypeChange(evt.target.dataset.sortType);
     }
   }

@@ -2,12 +2,30 @@ import Smart from './smart.js';
 import { TYPES } from '../const';
 import { TOWNS } from '../mock/event-destination';
 import { renderTypes, renderDestinations, renderOffers } from './view-utils';
-import { MOCK_EVENTS } from '../mock/events.js';
-import { mathcTypeOffer } from '../utils/form';
+import { eventOffers } from '../mock/event-offers';
+import { DESTINATIONS } from '../mock/event-destination';
+import { matchTypeOffers, matchCity } from '../utils/form';
+
+const renderImages = (pictures) => {
+  let images = '';
+
+  for (const picture of pictures) {
+    images += `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`;
+  }
+
+  return (
+    `<div class="event__photos-container">
+      <div class="event__photos-tape">
+        ${images}
+      </div>
+    </div>`
+  );
+};
 
 const createFormEventTemplate = (event) => {
   const { basePrice: price, dateFrom: dateFrom, dateTo: dateTo, destination, id, offers, type } = event;
-  const {description, name} = destination;
+  const {description, name, pictures} = destination;
+
   return `<li class="trip-events__item">
 		<form class="event event--edit" action="#" method="post">
 			<header class="event__header">
@@ -65,6 +83,7 @@ const createFormEventTemplate = (event) => {
 				<section class="event__section  event__section--destination">
 					<h3 class="event__section-title  event__section-title--destination">Destination</h3>
 					<p class="event__destination-description">${description}</p>
+          ${renderImages(pictures)}
 				</section>
 			</section>
 		</form>
@@ -75,16 +94,35 @@ export default class FormEvent extends Smart {
   constructor(event) {
     super();
     this._event = event;
+    this._data = FormEvent.parseEventToData(event);
 
     this._eventTypeSelectHandler = this._eventTypeSelectHandler.bind(this);
+    this._eventDestinationInputHandler = this._eventDestinationInputHandler.bind(this);
+    this._eventDestinationChangeHandler = this._eventDestinationChangeHandler.bind(this);
+    this._eventPriceChangeHandler = this._eventPriceChangeHandler.bind(this);
+    this._eventPriceInputHandler = this._eventPriceInputHandler.bind(this);
+    this._eventOffersClickHandler = this._eventOffersClickHandler.bind(this);
 
     this._editClickHandler = this._editClickHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._formRemoveHandler = this._formRemoveHandler.bind(this);
+
+    this._setInnerHandlers();
   }
 
   getTemplate() {
-    return createFormEventTemplate(this._event);
+    return createFormEventTemplate(this._data);
+  }
+
+  reset(event) {
+    this.updateData(FormEvent.parseEventToData(event));
+  }
+
+  restoreHandlers() { // restore handlers
+    this._setInnerHandlers();
+    this.setEditClickHandler(this._callback.editClick);
+    this.setEditSubmitHandler(this._callback.formSubmit);
+    this.setDeleteClickHandler(this._callback.deleteSubmit);
   }
 
   _eventTypeSelectHandler(evt) {
@@ -93,8 +131,111 @@ export default class FormEvent extends Smart {
 
     this.updateData({
       type: value,
-      offers: mathcTypeOffer(value, MOCK_EVENTS),
+      offers: matchTypeOffers(value, eventOffers),
     });
+  }
+
+  _eventDestinationInputHandler(evt) {
+    if(!evt.target.value.length) {
+      evt.target.setCustomValidity('This field should be not empty.');
+      this.getElement().querySelector('.event__save-btn').disabled = true;
+    }
+    else {
+      this.getElement().querySelector('.event__save-btn').disabled = false;
+      evt.target.setCustomValidity('');
+    }
+
+    evt.target.reportValidity();
+  }
+
+  _eventDestinationChangeHandler(evt) {
+    const selectedDestination = matchCity(evt.target.value, DESTINATIONS);
+
+    if(!selectedDestination) {
+      this.getElement().querySelector('.event__save-btn').disabled = true;
+      evt.target.setCustomValidity('A city with this name is not available. Please choose another one or make sure you entered this one correctly.');
+      evt.target.reportValidity();
+    }
+    else {
+      this.getElement().querySelector('.event__save-btn').disabled = false;
+      this.updateData({
+        destination: {
+          description: selectedDestination.description,
+          name: evt.target.value,
+          pictures: selectedDestination.pictures,
+        },
+      });
+    }
+  }
+
+  _eventPriceChangeHandler(evt) { // change input price
+    this.updateData({
+      'basePrice': evt.target.value,
+    }, true);
+  }
+
+  _eventPriceInputHandler(evt) {
+    evt.target.value = evt.target.value.replace(/[^0-9]/, '');
+
+    const price = Number(evt.target.value);
+
+    if (!price || price === 0) {
+      this.getElement().querySelector('.event__save-btn').disabled = true;
+      evt.target.setCustomValidity('The price field cannot be empty or equal to zero.');
+    }
+    else {
+      this.getElement().querySelector('.event__save-btn').disabled = false;
+      evt.target.setCustomValidity('');
+    }
+
+    evt.target.reportValidity();
+  }
+
+  _eventOffersClickHandler(evt) {
+    if (evt.target.nodeName === 'INPUT') {
+      const text = this.getElement().querySelector('label[for="' + evt.target.getAttribute('id') + '"] .event__offer-title').textContent;
+      const price = this.getElement().querySelector('label[for="' + evt.target.getAttribute('id') + '"] .event__offer-price').textContent;
+      const priceField = this.getElement().querySelector('.event__input--price');
+      let newPrice = 0;
+
+      if(evt.target.checked) {
+        newPrice = Number(priceField.getAttribute('value')) + Number(price);
+        priceField.setAttribute('value', Number(priceField.getAttribute('value')) + Number(price));
+      } else {
+        newPrice = Number(priceField.getAttribute('value')) - Number(price);
+        priceField.setAttribute('value', Number(priceField.getAttribute('value')) - Number(price));
+      }
+
+      const IndexOfferChecked = this._data.offers.findIndex((offer) =>  offer.title.includes(text));
+      const oldOffers = this._data.offers;
+      const offerChecked = Object.assign(
+        {},
+        this._data.offers[IndexOfferChecked],
+        {
+          isSelected: evt.target.checked,
+        },
+      );
+
+      const newOffers = [
+        ...oldOffers.slice(0, IndexOfferChecked),
+        offerChecked,
+        ...oldOffers.slice(IndexOfferChecked + 1),
+      ];
+
+      this.updateData({
+        offers: newOffers,
+        basePrice: newPrice,
+      }, true);
+    }
+  }
+
+  _setInnerHandlers() { // обработчики событий View
+    this.getElement().querySelector('.event__type-list').addEventListener('click', this._eventTypeSelectHandler);
+    this.getElement().querySelector('.event__input--destination').addEventListener('input', this._eventDestinationInputHandler);
+    this.getElement().querySelector('.event__input--destination').addEventListener('change', this._eventDestinationChangeHandler);
+    this.getElement().querySelector('.event__input--price').addEventListener('change', this._eventPriceChangeHandler);
+    this.getElement().querySelector('.event__input--price').addEventListener('input', this._eventPriceInputHandler);
+    this.getElement().querySelector('.event__details').addEventListener('click', this._eventOffersClickHandler);
   }
 
   _editClickHandler(evt) {
@@ -104,7 +245,7 @@ export default class FormEvent extends Smart {
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit(this._event);
+    this._callback.formSubmit(this._data);
   }
 
   _formRemoveHandler(evt) {
@@ -120,7 +261,7 @@ export default class FormEvent extends Smart {
 
   setEditSubmitHandler(callback) {
     this._callback.formSubmit = callback;
-    this.getElement().addEventListener('submit', this._formSubmitHandler);
+    this.getElement().querySelector('form').addEventListener('submit', this._formSubmitHandler);
   }
 
   setDeleteClickHandler(callback) {
