@@ -194,17 +194,6 @@ export default class FormEvent extends Smart {
   _eventOffersClickHandler(evt) {
     if (evt.target.nodeName === 'INPUT') {
       const text = this.getElement().querySelector('label[for="' + evt.target.getAttribute('id') + '"] .event__offer-title').textContent;
-      const price = this.getElement().querySelector('label[for="' + evt.target.getAttribute('id') + '"] .event__offer-price').textContent;
-      const priceField = this.getElement().querySelector('.event__input--price');
-      let newPrice = 0;
-
-      if(evt.target.checked) {
-        newPrice = Number(priceField.getAttribute('value')) + Number(price);
-        priceField.setAttribute('value', Number(priceField.getAttribute('value')) + Number(price));
-      } else {
-        newPrice = Number(priceField.getAttribute('value')) - Number(price);
-        priceField.setAttribute('value', Number(priceField.getAttribute('value')) - Number(price));
-      }
 
       const IndexOfferChecked = this._data.offers.findIndex((offer) =>  offer.title.includes(text));
       const oldOffers = this._data.offers;
@@ -224,7 +213,6 @@ export default class FormEvent extends Smart {
 
       this.updateData({
         offers: newOffers,
-        basePrice: newPrice,
       }, true);
     }
   }

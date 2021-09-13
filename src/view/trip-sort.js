@@ -42,9 +42,17 @@ export default class TripSort extends AbstractView {
 
   _sortTypeChangeHandler(evt) {
     if (evt.target.tagName === 'INPUT') {
-      evt.preventDefault();
-      // evt.target.setAttribute('checked', '');
+
+      this._removeInputChecked();
+      evt.target.setAttribute('checked', 'true');
       this._callback.sortTypeChange(evt.target.dataset.sortType);
+    }
+  }
+
+  _removeInputChecked() {
+    const inputs = this.getElement().querySelectorAll('input');
+    for (const input of inputs) {
+      input.removeAttribute('checked');
     }
   }
 
