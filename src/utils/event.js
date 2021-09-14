@@ -41,7 +41,7 @@ export const addDayGap = (date) => {
 };
 
 export const formatDifferenceDates = (dateFrom, dateTo) => {
-  const difference = dayjs.duration(dateTo.diff(dateFrom));
+  const difference = dayjs.duration(dayjs(dateTo).diff(dayjs(dateFrom)));
   let formatDifference;
   if(difference.days()) {
     formatDifference = difference.format('D[D] H[H] m[M]');

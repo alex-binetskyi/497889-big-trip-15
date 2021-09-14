@@ -5,6 +5,10 @@ import { renderTypes, renderDestinations, renderOffers } from './view-utils';
 import { eventOffers } from '../mock/event-offers';
 import { DESTINATIONS } from '../mock/event-destination';
 import { matchTypeOffers, matchCity } from '../utils/form';
+import flatpickr from 'flatpickr';
+import dayjs from 'dayjs';
+
+import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 const renderImages = (pictures) => {
   let images = '';
@@ -57,10 +61,10 @@ const createFormEventTemplate = (event) => {
 
 				<div class="event__field-group  event__field-group--time">
 					<label class="visually-hidden" for="event-start-time-${id}">From</label>
-					<input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value="${dateFrom.format('YY/MM/DD HH:MM')}">
+					<input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value="${dayjs(dateFrom).format('HH:mm')}">
 					&mdash;
 					<label class="visually-hidden" for="event-end-time-${id}">To</label>
-					<input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value="${dateTo.format('YY/MM/DD HH:MM')}">
+					<input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value="${dayjs(dateTo).format('HH:mm')}">
 				</div>
 
 				<div class="event__field-group  event__field-group--price">
@@ -95,6 +99,8 @@ export default class FormEvent extends Smart {
     super();
     this._event = event;
     this._data = FormEvent.parseEventToData(event);
+    this._datepicker = null;
+    this._datepickerEnd = null;
 
     this._eventTypeSelectHandler = this._eventTypeSelectHandler.bind(this);
     this._eventDestinationInputHandler = this._eventDestinationInputHandler.bind(this);
@@ -102,12 +108,16 @@ export default class FormEvent extends Smart {
     this._eventPriceChangeHandler = this._eventPriceChangeHandler.bind(this);
     this._eventPriceInputHandler = this._eventPriceInputHandler.bind(this);
     this._eventOffersClickHandler = this._eventOffersClickHandler.bind(this);
+    this._dateFromChangeHandler = this._dateFromChangeHandler.bind(this);
+    this._dateToChangeHandler = this._dateToChangeHandler.bind(this);
 
     this._editClickHandler = this._editClickHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._formRemoveHandler = this._formRemoveHandler.bind(this);
 
     this._setInnerHandlers();
+    this._setDatepicker();
+    this._setDatepickerEnd();
   }
 
   getTemplate() {
@@ -123,6 +133,43 @@ export default class FormEvent extends Smart {
     this.setEditClickHandler(this._callback.editClick);
     this.setEditSubmitHandler(this._callback.formSubmit);
     this.setDeleteClickHandler(this._callback.deleteSubmit);
+    this._setDatepicker();
+    this._setDatepickerEnd();
+  }
+
+  _setDatepicker() {
+    if (this._datepicker) {
+      this._datepicker.destroy();
+      this._datepicker = null;
+    }
+
+    this._datepicker = flatpickr(
+      this.getElement().querySelectorAll('.event__input--time')[0],
+      {
+        enableTime: true,
+        dateFormat: 'd/m/Y H:i',
+        defaultDate: this._data.dateFrom,
+        onChange: this._dateFromChangeHandler,
+      },
+    );
+  }
+
+  _setDatepickerEnd() {
+    if (this._datepickerEnd) {
+      this._datepickerEnd.destroy();
+      this._datepickerEnd = null;
+    }
+
+    this._datepickerEnd = flatpickr(
+      this.getElement().querySelectorAll('.event__input--time')[1],
+      {
+        enableTime: true,
+        dateFormat: 'd/m/Y H:i',
+        minDate: this._data.dateFrom,
+        defaultDate: this._data.dateTo,
+        onChange: this._dateToChangeHandler,
+      },
+    );
   }
 
   _eventTypeSelectHandler(evt) {
@@ -217,6 +264,22 @@ export default class FormEvent extends Smart {
     }
   }
 
+  _dateFromChangeHandler(userDate) {
+    if (dayjs(this._data.dateTo).diff(dayjs(userDate)) < 0) {
+      userDate = this._data.dateTo;
+    }
+
+    this.updateData({
+      dateFrom: userDate,
+    }, true);
+  }
+
+  _dateToChangeHandler(userDate) {
+    this.updateData({
+      dateTo: userDate,
+    }, true);
+  }
+
   _setInnerHandlers() { // обработчики событий View
     this.getElement().querySelector('.event__type-list').addEventListener('click', this._eventTypeSelectHandler);
     this.getElement().querySelector('.event__input--destination').addEventListener('input', this._eventDestinationInputHandler);
@@ -224,6 +287,8 @@ export default class FormEvent extends Smart {
     this.getElement().querySelector('.event__input--price').addEventListener('change', this._eventPriceChangeHandler);
     this.getElement().querySelector('.event__input--price').addEventListener('input', this._eventPriceInputHandler);
     this.getElement().querySelector('.event__details').addEventListener('click', this._eventOffersClickHandler);
+    this.getElement().querySelectorAll('.event__input--time')[0].addEventListener('click', this._dateFromChangeHandler);
+    this.getElement().querySelectorAll('.event__input--time')[1].addEventListener('click', this._dateToChangeHandler);
   }
 
   _editClickHandler(evt) {
@@ -248,6 +313,7 @@ export default class FormEvent extends Smart {
   }
 
   setEditSubmitHandler(callback) {
+
     this._callback.formSubmit = callback;
     this.getElement().querySelector('form').addEventListener('submit', this._formSubmitHandler);
   }
