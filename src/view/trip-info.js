@@ -1,10 +1,11 @@
 import AbstractView from './abstract.js';
 import { renderTripPath } from './view-utils';
+import dayjs from 'dayjs';
 
 const createTripInfoTemplate = (towns, dateFrom, dateTo) => (
   `<div class="trip-info__main">
     <h1 class="trip-info__title">${renderTripPath(towns)}</h1>  
-    <p class="trip-info__dates">${dateFrom.format('MMM D')} — ${dateTo.format('MMM D')}</p>
+    <p class="trip-info__dates">${dayjs(dateFrom).format('MMM D')} — ${dayjs(dateTo).format('MMM D')}</p>
     </div>`
 );
 

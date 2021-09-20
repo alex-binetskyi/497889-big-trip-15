@@ -4,6 +4,7 @@ import { TYPES } from '../const';
 import { eventOffers } from './event-offers';
 import { matchTypeOffers } from '../utils/form';
 import { DESTINATIONS } from './event-destination';
+import dayjs from 'dayjs';
 
 const EVENT_COUNT = 15;
 const MOCK_EVENTS = [];
@@ -24,6 +25,10 @@ for(let i = 0; i < EVENT_COUNT; i++) {
   const type = TYPES[getRandomInteger(0, TYPES.length - 1)];
   event['type'] = type;
   event['offers'] = matchTypeOffers(type, eventOffers);
+
+  event['dateFrom'] = dayjs(event['dateFrom']).format('YYYY-MM-DDTHH:mm:ss.ms[Z]');
+  event['dateTo'] = dayjs(event['dateTo']).format('YYYY-MM-DDTHH:mm:ss.ms[Z]');
+
   MOCK_EVENTS.push(event);
 }
 

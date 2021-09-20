@@ -1,5 +1,6 @@
 import AbstractView from './abstract.js';
 import { formatDifferenceDates } from '../utils/event';
+import dayjs from 'dayjs';
 
 const renderOffers = (offers) => {
   if(offers.length > 0) {
@@ -25,16 +26,16 @@ const createTripEventTempate = (event) => {
   const { basePrice: price, dateFrom: dateFrom, dateTo: dateTo, destination, isFavorite: isFavorite, offers, type } = event;
   return `<li class="trip-events__item">
     <div class="event">
-      <time class="event__date" datetime="${dateFrom.format('YYYY-MM-DD')}">${dateFrom.format('MMM-D')}</time>
+      <time class="event__date" datetime="">${dayjs(dateFrom).format('DD MMM')}</time>
       <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
       </div>
       <h3 class="event__title">${type} ${destination.name}</h3>
       <div class="event__schedule">
         <p class="event__time">
-          <time class="event__start-time" datetime="${dateFrom.format('YYYY-MM-DD HH:mm')}">${dateFrom.format('HH:mm')}</time>
+          <time class="event__start-time" datetime="">${dayjs(dateFrom).format('HH:mm')}</time>
           —
-          <time class="event__end-time" datetime="${dateTo.format('YYYY-MM-DD HH:mm')}">${dateTo.format('HH:mm')}</time>
+          <time class="event__end-time" datetime="">${dayjs(dateTo).format('HH:mm')}</time>
         </p>
         <p class="event__duration">${formatDifferenceDates(dateFrom, dateTo)}</p>
       </div>
