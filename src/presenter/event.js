@@ -2,6 +2,7 @@ import TripEventView from '../view/trip-event.js';
 import FormEventView from '../view/form-event.js';
 
 import {render, RenderPosition, replace, remove} from '../utils/render.js';
+import {UserAction, UpdateType} from '../const.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -102,6 +103,8 @@ export default class EventPresenter {
 
   _handleFavoriteClick() {
     this._changeData(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
       Object.assign(
         {},
         this._event,
@@ -113,7 +116,11 @@ export default class EventPresenter {
   }
 
   _handleEditSubmit(event) {
-    this._changeData(event);
+    this._changeData(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
+      event,
+    );
     this._replaceFormToEvent();
   }
 }

@@ -3,7 +3,7 @@ import TripEventListView from '../view/trip-events-list.js';
 import TripEventListEmptyView from '../view/trip-events-list-empty.js';
 import EventPresenter from './event.js';
 import { SortType } from '../const.js';
-import {updateItem, sortByPrice, sortByTime} from '../utils/common.js';
+import {sortByPrice, sortByTime} from '../utils/common.js';
 import {render, RenderPosition} from '../utils/render.js';
 
 export default class Trip {
@@ -18,9 +18,11 @@ export default class Trip {
     this._emptyEventsListComponent = new TripEventListEmptyView();
     this._currentSortType = SortType.DAY;
 
-    this._handleEventChange = this._handleEventChange.bind(this);
+    this._handleViewAction = this._handleViewAction.bind(this);
+    this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
+    this._eventsModel.addObserver(this._handleModelEvent);
   }
 
   init() {
@@ -31,12 +33,12 @@ export default class Trip {
   _getEvents() {
     switch (this._currentSortType) {
       case SortType.TIME:
-        return this._pointsModel.getPoints().slice().sort(sortByTime);
+        return this._eventsModel.getEvents().slice().sort(sortByTime);
       case SortType.PRICE:
-        return this._pointsModel.getPoints().slice().sort(sortByPrice);
+        return this._eventsModel.getEvents().slice().sort(sortByPrice);
     }
 
-    return this._eventsModel.getPoints();
+    return this._eventsModel.getEvents();
   }
 
   _handleSortTypeChange(sortType) {
@@ -58,10 +60,20 @@ export default class Trip {
     this._eventPresenter.forEach((presenter) => presenter.resetView());
   }
 
-  _handleEventChange(updatedEvent) {
-    this._events = updateItem(this._events, updatedEvent);
-    this._startEvents = updateItem(this._startEvents, updatedEvent);
-    this._eventPresenter.get(updatedEvent.id).init(updatedEvent);
+  _handleViewAction(actionType, updateType, update) {
+    console.log(actionType, updateType, update);
+    // Здесь будем вызывать обновление модели.
+    // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
+    // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
+    // update - обновленные данные
+  }
+
+  _handleModelEvent(updateType, data) {
+    console.log(updateType, data);
+    // В зависимости от типа изменений решаем, что делать:
+    // - обновить часть списка (например, когда поменялось описание)
+    // - обновить список (например, когда задача ушла в архив)
+    // - обновить всю доску (например, при переключении фильтра)
   }
 
   _renderSort() {
@@ -71,7 +83,7 @@ export default class Trip {
   }
 
   _renderEvent(event) {
-    const point = new EventPresenter(this._eventsListComponent, this._handleEventChange, this._handleModeChange);
+    const point = new EventPresenter(this._eventsListComponent, this._handleViewAction, this._handleModeChange);
     point.init(event);
     this._eventPresenter.set(event.id, point);
   }
