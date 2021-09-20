@@ -99,7 +99,7 @@ export default class FormEvent extends Smart {
     super();
     this._event = event;
     this._data = FormEvent.parseEventToData(event);
-    this._datepicker = null;
+    this._datepickerStart = null;
     this._datepickerEnd = null;
 
     this._eventTypeSelectHandler = this._eventTypeSelectHandler.bind(this);
@@ -108,16 +108,15 @@ export default class FormEvent extends Smart {
     this._eventPriceChangeHandler = this._eventPriceChangeHandler.bind(this);
     this._eventPriceInputHandler = this._eventPriceInputHandler.bind(this);
     this._eventOffersClickHandler = this._eventOffersClickHandler.bind(this);
-    this._dateFromChangeHandler = this._dateFromChangeHandler.bind(this);
-    this._dateToChangeHandler = this._dateToChangeHandler.bind(this);
+    this._startDateChangeHandler = this._startDateChangeHandler.bind(this);
+    this._endDateChangeHandler = this._endDateChangeHandler.bind(this);
 
     this._editClickHandler = this._editClickHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._formRemoveHandler = this._formRemoveHandler.bind(this);
 
     this._setInnerHandlers();
-    this._setDatepicker();
-    this._setDatepickerEnd();
+    this._setDatepickers();
   }
 
   getTemplate() {
@@ -133,41 +132,42 @@ export default class FormEvent extends Smart {
     this.setEditClickHandler(this._callback.editClick);
     this.setEditSubmitHandler(this._callback.formSubmit);
     this.setDeleteClickHandler(this._callback.deleteSubmit);
-    this._setDatepicker();
-    this._setDatepickerEnd();
+    this._setDatepickers();
   }
 
-  _setDatepicker() {
-    if (this._datepicker) {
-      this._datepicker.destroy();
-      this._datepicker = null;
+  _setDatepickers() {
+    if (this._datepickerStart) {
+      // В случае обновления компонента удаляем вспомогательные DOM-элементы,
+      // которые создает flatpickr при инициализации
+      this._datepickerStart.destroy();
+      this._datepickerStart = null;
     }
 
-    this._datepicker = flatpickr(
-      this.getElement().querySelectorAll('.event__input--time')[0],
-      {
-        enableTime: true,
-        dateFormat: 'd/m/Y H:i',
-        defaultDate: this._data.dateFrom,
-        onChange: this._dateFromChangeHandler,
-      },
-    );
-  }
-
-  _setDatepickerEnd() {
     if (this._datepickerEnd) {
+      // В случае обновления компонента удаляем вспомогательные DOM-элементы,
+      // которые создает flatpickr при инициализации
       this._datepickerEnd.destroy();
       this._datepickerEnd = null;
     }
 
-    this._datepickerEnd = flatpickr(
-      this.getElement().querySelectorAll('.event__input--time')[1],
+    this._datepickerStart = flatpickr(
+      this.getElement().querySelector(`#event-start-time-${this._data.id}`),
       {
+        dateFormat: 'd/m/y H:i',
         enableTime: true,
-        dateFormat: 'd/m/Y H:i',
+        defaultDate: this._data.dateFrom,
+        onChange: this._startDateChangeHandler, // На событие flatpickr передаём наш колбэк
+      },
+    );
+
+    this._datepickerEnd = flatpickr(
+      this.getElement().querySelector(`#event-end-time-${this._data.id}`),
+      {
+        dateFormat: 'd/m/y H:i',
         minDate: this._data.dateFrom,
+        enableTime: true,
         defaultDate: this._data.dateTo,
-        onChange: this._dateToChangeHandler,
+        onChange: this._endDateChangeHandler, // На событие flatpickr передаём наш колбэк
       },
     );
   }
@@ -240,7 +240,7 @@ export default class FormEvent extends Smart {
 
   _eventOffersClickHandler(evt) {
     if (evt.target.nodeName === 'INPUT') {
-      const text = this.getElement().querySelector('label[for="' + evt.target.getAttribute('id') + '"] .event__offer-title').textContent;
+      const text = this.getElement().querySelector(`label[for="${evt.target.getAttribute('id')}"] .event__offer-title`).textContent;
 
       const IndexOfferChecked = this._data.offers.findIndex((offer) =>  offer.title.includes(text));
       const oldOffers = this._data.offers;
@@ -264,20 +264,19 @@ export default class FormEvent extends Smart {
     }
   }
 
-  _dateFromChangeHandler(userDate) {
-    if (dayjs(this._data.dateTo).diff(dayjs(userDate)) < 0) {
-      userDate = this._data.dateTo;
+  _startDateChangeHandler([userStartDate]) {
+    if (dayjs(this._data.dateTo).diff(dayjs(userStartDate)) < 0) {
+      userStartDate = this._data.dateTo;
     }
-
     this.updateData({
-      dateFrom: userDate,
-    }, true);
+      dateFrom: userStartDate,
+    });
   }
 
-  _dateToChangeHandler(userDate) {
+  _endDateChangeHandler([userEndDate]) {
     this.updateData({
-      dateTo: userDate,
-    }, true);
+      dateTo: userEndDate,
+    });
   }
 
   _setInnerHandlers() { // обработчики событий View
