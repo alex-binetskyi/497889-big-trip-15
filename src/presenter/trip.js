@@ -7,9 +7,11 @@ import {updateItem, sortByPrice, sortByTime} from '../utils/common.js';
 import {render, RenderPosition} from '../utils/render.js';
 
 export default class Trip {
-  constructor(tripContainer) {
+  constructor(tripContainer, eventsModel) {
     this._tripContainer = tripContainer; // siteTripEvents?
     this._eventPresenter = new Map();
+
+    this._eventsModel = eventsModel;
 
     this._sortComponent = new TripSortView();
     this._eventsListComponent = new TripEventListView();
@@ -21,27 +23,20 @@ export default class Trip {
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
   }
 
-  init(events) {
+  init() {
     // Инициализация.
-    this._events = events.slice();
-    this._startEvents = events.slice();
-    this._eventsCount = this._events.length;
     this._renderBoard();
   }
 
-  _sortEvents(sortType) {
-    switch (sortType) {
+  _getEvents() {
+    switch (this._currentSortType) {
       case SortType.TIME:
-        this._events.sort(sortByTime);
-        break;
+        return this._pointsModel.getPoints().slice().sort(sortByTime);
       case SortType.PRICE:
-        this._events.sort(sortByPrice);
-        break;
-      default:
-        this._events = [...this._startEvents];
+        return this._pointsModel.getPoints().slice().sort(sortByPrice);
     }
 
-    this._currentSortType = sortType;
+    return this._eventsModel.getPoints();
   }
 
   _handleSortTypeChange(sortType) {
@@ -49,7 +44,7 @@ export default class Trip {
       return;
     }
 
-    this._sortEvents(sortType);
+    this._currentSortType = sortType;
     this._clearEventList();
     this._renderEvents();
   }
@@ -97,7 +92,7 @@ export default class Trip {
   }
 
   _renderBoard() {
-    if(this._eventsCount) {
+    if(this._getEvents()) {
       this._renderSort();
       this._renderEventsList();
       this._renderEvents();
