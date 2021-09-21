@@ -261,7 +261,7 @@ export default class Statistics extends Smart {
     timeCtx.height = BAR_HEIGHT * 5;
 
     this._moneyChart = generateMoneyChart(moneyCtx, this._data);
-    this._timeChart = generateTimeSpendChart(typeCtx, this._data);
-    this._typeChart = generateTypeChart(timeCtx, this._data);
+    this._typeChart = generateTypeChart(typeCtx, this._data);
+    this._timeChart = generateTimeSpendChart(timeCtx, this._data);
   }
 }

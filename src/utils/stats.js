@@ -27,11 +27,14 @@ export const countPointsTypes = (events) => {
 };
 
 export const countTimeByType = (events) => {
-  const dataSortByTime = events.slice().sort((elem1, elem2) => dayjs(elem2.timeTo).diff(dayjs(elem2.timeFrom)) - dayjs(elem1.timeTo).diff(dayjs(elem1.timeFrom)));
+  const dataSortByTime = events.slice().sort((elem1, elem2) => {
+    dayjs(elem2.dateTo).diff(dayjs(elem2.dateFrom)) - dayjs(elem1.dateTo).diff(dayjs(elem1.dateFrom));
+  });
+
   let result = null;
   result = Object.fromEntries(dataSortByTime.map((item) => [item.type, 0]));
   dataSortByTime.forEach((item) => {
-    result[item.type] += (item.dateTo - item.dateFrom);
+    result[item.type] += (dayjs(item.dateTo).diff(dayjs(item.dateFrom)));
   });
   return result;
 };

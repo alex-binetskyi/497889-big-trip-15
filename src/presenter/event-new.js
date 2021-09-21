@@ -47,11 +47,11 @@ export default class EventNew {
     document.removeEventListener('keydown', this._escKeyDownHandler);
   }
 
-  _handleFormSubmit(point) {
+  _handleFormSubmit(event) {
     this._changeData(
       UserAction.ADD_POINT,
       UpdateType.MINOR,
-      Object.assign({id: nanoid()}, point),
+      Object.assign({id: nanoid()}, event),
     );
     this.destroy();
   }

@@ -30,7 +30,7 @@ export default class Trip {
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
     this._eventsModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
-    this._eventNewPresenter = new EventNewPresenter(this._tripContainer, this._handleViewAction);
+    this._eventNewPresenter = new EventNewPresenter(this._eventsListComponent, this._handleViewAction);
   }
 
   init() {
@@ -80,7 +80,6 @@ export default class Trip {
     }
 
     this._currentSortType = sortType;
-    this._clearEventList();
     this._clearEventList({resetSortType: true});
     this._renderEvents();
   }

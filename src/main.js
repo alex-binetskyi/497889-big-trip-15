@@ -21,15 +21,15 @@ eventsModel.setEvents(events);
 const filterModel = new FilterModel();
 const MenuComponent = new MenuView();
 
-const siteMainElement = document.querySelector('.page-body__page-main');
-const addNewPointElement = document.querySelector('.trip-main__event-add-btn');
+const siteMainElement = document.querySelector('.page-body__page-main').querySelector('.page-body__container');
+const newEventBtnElement = document.querySelector('.trip-main__event-add-btn');
 let statsComponent = new StatsView();
-const siteTripControlsNavigation = document.querySelector('.trip-controls__navigation');
-render(siteTripControlsNavigation, MenuComponent, RenderPosition.BEFOREEND);
+const siteControlsNavigation = document.querySelector('.trip-controls__navigation');
+render(siteControlsNavigation, MenuComponent, RenderPosition.BEFOREEND);
 const siteTripControlsFilters = document.querySelector('.trip-controls__filters');
 const siteTripEvents = document.querySelector('.trip-events');
 
-if(events.length) {
+if(events.length > 0) {
   const siteTripMain = document.querySelector('.trip-main');
   render(siteTripMain, new TripInfoSectionView(), RenderPosition.AFTERBEGIN);
   const siteTripInfoSection = document.querySelector('.trip-info');
@@ -43,7 +43,6 @@ const trip = new TripPresenter(siteTripEvents, eventsModel, filterModel);
 const filter = new FilterPresenter(siteTripControlsFilters, filterModel, eventsModel);
 
 const handleSiteMenuClick = (menuItem) => {
-  // console.log('menuItem', menuItem);
   switch (menuItem) {
     case MenuItem.TABLE:
       MenuComponent.getElement().querySelector('#menu_table').classList.add('trip-tabs__btn--active');
@@ -64,7 +63,7 @@ const handleSiteMenuClick = (menuItem) => {
 
 MenuComponent.setMenuClickHandler(handleSiteMenuClick);
 
-addNewPointElement.addEventListener('click', (evt) => {
+newEventBtnElement.addEventListener('click', (evt) => {
   evt.preventDefault();
   trip.createEvent();
 });
