@@ -2,9 +2,9 @@ import TripSortView from '../view/trip-sort.js';
 import TripEventListView from '../view/trip-events-list.js';
 import TripEventListEmptyView from '../view/trip-events-list-empty.js';
 import EventPresenter from './event.js';
-import {SortType, UpdateType, UserAction} from '../const.js';
+import {SortType, UpdateType, UserAction, FilterType} from '../const.js';
 import {sortByPrice, sortByTime} from '../utils/common.js';
-import {render, RenderPosition} from '../utils/render.js';
+import {render, RenderPosition, remove} from '../utils/render.js';
 import {filter} from '../utils/filter.js';
 
 export default class Trip {
@@ -14,10 +14,13 @@ export default class Trip {
 
     this._eventsModel = eventsModel;
     this._filterModel = filterModel;
+    this._emptyEventsListComponent = null;
 
     this._sortComponent = new TripSortView();
     this._eventsListComponent = new TripEventListView();
     this._emptyEventsListComponent = new TripEventListEmptyView();
+
+    this._filterType = FilterType.EVERYTHING;
     this._currentSortType = SortType.DAY;
 
     this._handleViewAction = this._handleViewAction.bind(this);
@@ -37,9 +40,9 @@ export default class Trip {
   }
 
   _getEvents() {
-    const filterType = this._filterModel.getFilter();
+    this._filterType = this._filterModel.getFilter();
     const events = this._eventsModel.getEvents();
-    const filtredEvents = filter[filterType](events);
+    const filtredEvents = filter[this._filterType](events);
 
     switch (this._currentSortType) {
       case SortType.TIME:
@@ -65,6 +68,10 @@ export default class Trip {
   _clearEventList() {
     this._eventPresenter.forEach((presenter) => presenter.destroy());
     this._eventPresenter.clear();
+
+    if (this._emptyEventsListComponent) {
+      remove(this._emptyEventsListComponent);
+    }
   }
 
   _handleModeChange() {
@@ -132,11 +139,12 @@ export default class Trip {
 
   _renderNoEvents() {
     // Рендер списка для событий.
+    this._emptyEventsListComponent = new TripEventListEmptyView(this._filterType);
     render(this._tripContainer, this._emptyEventsListComponent, RenderPosition.BEFOREEND);
   }
 
   _renderBoard() {
-    if(this._getEvents()) {
+    if(this._getEvents().length > 0) {
       this._renderEventsList();
       this._renderEvents();
     } else {
