@@ -4,6 +4,8 @@ import FormEventView from '../view/form-event.js';
 import {render, RenderPosition, replace, remove} from '../utils/render.js';
 import {UserAction, UpdateType} from '../const.js';
 
+import {isDatesEqual} from '../utils/event.js';
+
 const Mode = {
   DEFAULT: 'DEFAULT',
   EDITING: 'EDITING',
@@ -25,7 +27,7 @@ export default class EventPresenter {
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
     this._handleEditClickRollup = this._handleEditClickRollup.bind(this);
     this._handleEditSubmit = this._handleEditSubmit.bind(this);
-    this._removeEditForm = this._removeEditForm.bind(this);
+    this._handleDeleteClick = this._handleDeleteClick.bind(this);
   }
 
   init(event) {
@@ -40,7 +42,7 @@ export default class EventPresenter {
     this._pointComponent.setEditClickHandler(this._replaceEventToForm);
     this._pointEditComponent.setEditClickHandler(this._handleEditClickRollup);
     this._pointEditComponent.setEditSubmitHandler(this._handleEditSubmit);
-    this._pointEditComponent.setDeleteClickHandler(this._removeEditForm);
+    this._pointEditComponent.setDeleteClickHandler(this._handleDeleteClick);
     this._pointComponent.setFavoriteClickHandler(this._handleFavoriteClick);
 
     if (prevPointComponent === null || prevPointEditComponent === null) {
@@ -69,10 +71,6 @@ export default class EventPresenter {
     if (this._mode !== Mode.DEFAULT) {
       this._replaceFormToEvent();
     }
-  }
-
-  _removeEditForm() {
-    remove(this._pointEditComponent);
   }
 
   _replaceEventToForm() {
@@ -115,12 +113,30 @@ export default class EventPresenter {
     );
   }
 
-  _handleEditSubmit(event) {
+  _handleEditSubmit(update) {
+    // Проверяем, поменялись ли в задаче данные, которые попадают под фильтрацию,
+    // а значит требуют перерисовки списка - если таких нет, это PATCH-обновление
+    const isDateFromEqual = isDatesEqual(this._event.dateFrom, update.dateFrom);
+    const isDateToEqual = isDatesEqual(this._event.dateTo, update.dateTo);
+    const isPriceEqual = this._event.basePrice === update.basePrice;
+    const isDestinationEqual = this._event.destination.name === update.destination.name;
+
+    const isMinorUpdate = !isDateFromEqual || !isDateToEqual || !isPriceEqual || !isDestinationEqual;
+
     this._changeData(
       UserAction.UPDATE_POINT,
+      isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+      update,
+    );
+    this._replaceFormToEvent();
+  }
+
+  _handleDeleteClick(event) {
+    console.log('DELETE');
+    this._changeData(
+      UserAction.DELETE_POINT,
       UpdateType.MINOR,
       event,
     );
-    this._replaceFormToEvent();
   }
 }

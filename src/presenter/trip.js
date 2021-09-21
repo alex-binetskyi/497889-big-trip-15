@@ -29,6 +29,8 @@ export default class Trip {
     // Инициализация.
     this._renderSort();
     this._renderBoard();
+
+    this._eventsModel.addObserver(this._handleModelEvent);
   }
 
   _getEvents() {
@@ -64,13 +66,13 @@ export default class Trip {
 
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
-      case UserAction.UPDATE_TASK:
+      case UserAction.UPDATE_POINT:
         this._eventsModel.updateEvent(updateType, update);
         break;
-      case UserAction.ADD_TASK:
+      case UserAction.ADD_POINT:
         this._eventsModel.addEvent(updateType, update);
         break;
-      case UserAction.DELETE_TASK:
+      case UserAction.DELETE_POINT:
         this._eventsModel.deleteEvent(updateType, update);
         break;
     }
