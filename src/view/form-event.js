@@ -10,6 +10,21 @@ import dayjs from 'dayjs';
 
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
+const NEW_EVENT = {
+  basePrice: 0,
+  dateFrom: Date.now(),
+  dateTo: Date.now(),
+  destination:
+    {
+      description: '',
+      name: '',
+      pictures: [],
+    },
+  isFavorite: false,
+  offers: [],
+  type: 'taxi',
+};
+
 const renderImages = (pictures) => {
   let images = '';
 
@@ -95,7 +110,7 @@ const createFormEventTemplate = (event) => {
 };
 
 export default class FormEvent extends Smart {
-  constructor(event) {
+  constructor(event = NEW_EVENT) {
     super();
     this._event = event;
     this._data = FormEvent.parseEventToData(event);
@@ -313,12 +328,6 @@ export default class FormEvent extends Smart {
     evt.preventDefault();
     this._callback.formSubmit(this._data);
   }
-
-  // _formRemoveHandler(evt) {
-  //   evt.preventDefault();
-  //   this._callback.deleteSubmit();
-  //   this._element = null;
-  // }
 
   setEditClickHandler(callback) {
     this._callback.editClick = callback;

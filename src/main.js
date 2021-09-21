@@ -39,3 +39,8 @@ const filter = new FilterPresenter(siteTripControlsFilters, filterModel, eventsM
 
 trip.init();
 filter.init();
+
+document.querySelector('.trip-main__event-add-btn').addEventListener('click', (evt) => {
+  evt.preventDefault();
+  trip.createEvent();
+});
