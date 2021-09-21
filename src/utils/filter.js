@@ -1,9 +1,10 @@
 import {FilterType} from '../const';
+import dayjs from 'dayjs';
 
-const currentDate = Date.now();
+const currentDate = dayjs(Date.now()).format('YYYY-MM-DDTHH:mm:ss.ms[Z]');
 
 export const filter = {
-  [FilterType.EVERYTHING]: (points) => points.filter((point) => point),
-  [FilterType.FUTURE]: (points) => points.filter((point) => point.dateFrom >= currentDate),
-  [FilterType.PAST]: (points) => points.filter((point) => point.dateTo <= currentDate),
+  [FilterType.EVERYTHING]: (events) => events.filter((event) => event),
+  [FilterType.FUTURE]: (events) => events.filter((event) => event.dateFrom >= currentDate),
+  [FilterType.PAST]: (events) => events.filter((event) => event.dateTo <= currentDate),
 };

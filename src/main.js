@@ -34,7 +34,7 @@ if(events.length) {
   render(siteTripInfoSection, new TripCostView(price), RenderPosition.BEFOREEND);
 }
 
-const trip = new TripPresenter(siteTripEvents, eventsModel);
+const trip = new TripPresenter(siteTripEvents, eventsModel, filterModel);
 const filter = new FilterPresenter(siteTripControlsFilters, filterModel, eventsModel);
 
 trip.init();
