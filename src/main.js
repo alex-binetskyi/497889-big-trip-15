@@ -4,20 +4,13 @@ import MenuView from './view/menu.js';
 import TripInfoSectionView from './view/trip-info-section.js';
 import TripInfoView from './view/trip-info.js';
 import TripCostView from './view/trip-cost.js';
-import TripFiltersView from './view/trip-filters.js';
-import Trip from './presenter/trip.js';
+import TripPresenter from './presenter/trip.js';
+import FilterPresenter from './presenter/filter.js';
 import EventsModel from './model/events.js';
 import FilterModel from './model/filter.js';
 
 import {render, RenderPosition } from './utils/render.js';
 import {reducer} from './utils/common.js';
-
-const filters = [
-  {
-    type: 'everything',
-    name: 'EVERYTHING',
-  },
-];
 
 const events = MOCK_EVENTS;
 const eventsModel = new EventsModel();
@@ -28,7 +21,6 @@ const filterModel = new FilterModel();
 const siteTripControlsNavigation = document.querySelector('.trip-controls__navigation');
 render(siteTripControlsNavigation, new MenuView(), RenderPosition.BEFOREEND);
 const siteTripControlsFilters = document.querySelector('.trip-controls__filters');
-render(siteTripControlsFilters, new TripFiltersView(filters, 'everything'), RenderPosition.BEFOREEND);
 
 const siteTripEvents = document.querySelector('.trip-events');
 
@@ -42,5 +34,8 @@ if(events.length) {
   render(siteTripInfoSection, new TripCostView(price), RenderPosition.BEFOREEND);
 }
 
-const trip = new Trip(siteTripEvents, eventsModel);
+const trip = new TripPresenter(siteTripEvents, eventsModel);
+const filter = new FilterPresenter(siteTripControlsFilters, filterModel, eventsModel);
+
 trip.init();
+filter.init();

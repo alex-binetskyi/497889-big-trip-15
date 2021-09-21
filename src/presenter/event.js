@@ -132,7 +132,6 @@ export default class EventPresenter {
   }
 
   _handleDeleteClick(event) {
-    console.log('DELETE');
     this._changeData(
       UserAction.DELETE_POINT,
       UpdateType.MINOR,
