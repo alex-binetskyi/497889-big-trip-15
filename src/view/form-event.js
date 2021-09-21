@@ -10,6 +10,21 @@ import dayjs from 'dayjs';
 
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
+const NEW_EVENT = {
+  basePrice: 0,
+  dateFrom: Date.now(),
+  dateTo: Date.now(),
+  destination:
+    {
+      description: '',
+      name: '',
+      pictures: [],
+    },
+  isFavorite: false,
+  offers: [],
+  type: 'taxi',
+};
+
 const renderImages = (pictures) => {
   let images = '';
 
@@ -95,7 +110,7 @@ const createFormEventTemplate = (event) => {
 };
 
 export default class FormEvent extends Smart {
-  constructor(event) {
+  constructor(event = NEW_EVENT) {
     super();
     this._event = event;
     this._data = FormEvent.parseEventToData(event);
@@ -113,10 +128,24 @@ export default class FormEvent extends Smart {
 
     this._editClickHandler = this._editClickHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
-    this._formRemoveHandler = this._formRemoveHandler.bind(this);
+    this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
 
     this._setInnerHandlers();
     this._setDatepickers();
+  }
+
+  removeElement() {
+    super.removeElement();
+
+    if (this._datepickerStart) {
+      this._datepickerStart.destroy();
+      this._datepickerStart = null;
+    }
+
+    if (this._datepickerEnd) {
+      this._datepickerEnd.destroy();
+      this._datepickerEnd = null;
+    }
   }
 
   getTemplate() {
@@ -131,7 +160,7 @@ export default class FormEvent extends Smart {
     this._setInnerHandlers();
     this.setEditClickHandler(this._callback.editClick);
     this.setEditSubmitHandler(this._callback.formSubmit);
-    this.setDeleteClickHandler(this._callback.deleteSubmit);
+    this.setDeleteClickHandler(this._callback.deleteClick);
     this._setDatepickers();
   }
 
@@ -300,26 +329,25 @@ export default class FormEvent extends Smart {
     this._callback.formSubmit(this._data);
   }
 
-  _formRemoveHandler(evt) {
-    evt.preventDefault();
-    this._callback.deleteSubmit();
-    this._element = null;
-  }
-
   setEditClickHandler(callback) {
     this._callback.editClick = callback;
     this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._editClickHandler);
   }
 
   setEditSubmitHandler(callback) {
-
     this._callback.formSubmit = callback;
     this.getElement().querySelector('form').addEventListener('submit', this._formSubmitHandler);
   }
 
+  _formDeleteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.deleteClick(FormEvent.parseDataToEvent(this._data));
+    this._element = null;
+  }
+
   setDeleteClickHandler(callback) {
-    this._callback.deleteSubmit = callback;
-    this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._formRemoveHandler);
+    this._callback.deleteClick = callback;
+    this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._formDeleteClickHandler);
   }
 
   static parseEventToData(event) {

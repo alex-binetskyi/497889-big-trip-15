@@ -1,11 +1,28 @@
 import AbstractView from './abstract.js';
+import {FilterType} from '../const.js';
 
-export const createTripEventsListEmptyTemplate = () => (
-  '<p class="trip-events__msg">Click New Event to create your first point</p>'
-);
+const emptyListType = {
+  [FilterType.EVERYTHING]: 'Click New Event to create your first point',
+  [FilterType.FUTURE]: 'There are no future events now',
+  [FilterType.PAST]: 'There are no past events now',
+};
 
-export default class TripFilters extends AbstractView {
+const createTripEventsListEmptyTemplate = (filterType) => {
+  const emptyListText = emptyListType[filterType];
+
+  return (
+    `<p class="trip-events__msg">
+      ${emptyListText}
+    </p>`);
+};
+
+export default class NoPoint extends AbstractView {
+  constructor(data) {
+    super();
+    this._data = data;
+  }
+
   getTemplate() {
-    return createTripEventsListEmptyTemplate();
+    return createTripEventsListEmptyTemplate(this._data);
   }
 }

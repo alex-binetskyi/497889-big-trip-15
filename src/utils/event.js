@@ -40,6 +40,8 @@ export const addDayGap = (date) => {
   return dayjs(date).add(dayOffset, 'day').add(hoursOffset, 'hour').add(minutesOffset, 'minute');
 };
 
+export const isDatesEqual = (dateA, dateB) => ((dateA === null && dateB === null) ? true : dayjs(dateA).isSame(dateB, 'D'));
+
 export const formatDifferenceDates = (dateFrom, dateTo) => {
   const difference = dayjs.duration(dayjs(dateTo).diff(dayjs(dateFrom)));
   let formatDifference;
