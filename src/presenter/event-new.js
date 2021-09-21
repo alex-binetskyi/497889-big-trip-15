@@ -9,9 +9,11 @@ export default class EventNew {
     this._changeData = changeData;
 
     this._eventEditComponent = null;
+    this._destroyCallback = null;
 
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._handleDeleteClick = this._handleDeleteClick.bind(this);
+    this._handleCloseButtonClick = this._handleCloseButtonClick.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
 
@@ -23,6 +25,7 @@ export default class EventNew {
     this._eventEditComponent = new FormEventView();
     this._eventEditComponent.setEditSubmitHandler(this._handleFormSubmit);
     this._eventEditComponent.setDeleteClickHandler(this._handleDeleteClick);
+    this._eventEditComponent.setEditClickHandler(this._handleCloseButtonClick);
 
     render(this._container, this._eventEditComponent, RenderPosition.AFTERBEGIN);
 
@@ -32,6 +35,10 @@ export default class EventNew {
   destroy() {
     if (this._eventEditComponent === null) {
       return;
+    }
+
+    if (this._destroyCallback !== null) {
+      this._destroyCallback();
     }
 
     remove(this._eventEditComponent);
@@ -50,6 +57,10 @@ export default class EventNew {
   }
 
   _handleDeleteClick() {
+    this.destroy();
+  }
+
+  _handleCloseButtonClick() {
     this.destroy();
   }
 

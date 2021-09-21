@@ -39,12 +39,24 @@ export default class Trip {
     this._renderBoard();
 
     this._eventsModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
   }
 
-  createEvent() {
+  destroy() {
+    this._currentSortType = SortType.DEFAULT;
+    this._clearEventList({resetRenderedPointCount: true, resetSortType: true});
+
+    remove(this._eventsListComponent);
+    remove(this._sortComponent);
+
+    this._eventsModel.removeObserver(this._handleModelEvent);
+    this._filterModel.removeObserver(this._handleModelEvent);
+  }
+
+  createEvent(callback) {
     this._currentSortType = SortType.DEFAULT;
     this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    this._eventNewPresenter.init();
+    this._eventNewPresenter.init(callback);
   }
 
   _getEvents() {
@@ -84,7 +96,7 @@ export default class Trip {
   }
 
   _handleModeChange() {
-    this._pointNewPresenter.destroy();
+    this._eventNewPresenter.destroy();
     this._eventPresenter.forEach((presenter) => presenter.resetView());
   }
 

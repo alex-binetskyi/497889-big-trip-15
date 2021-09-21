@@ -31,3 +31,9 @@ export const FilterType = {
   FUTURE: 'future',
   PAST: 'past',
 };
+
+export const MenuItem = {
+  ADD_NEW_POINT: 'menu_add_new_point',
+  TABLE: 'menu_table',
+  STATS: 'menu_stats',
+};
