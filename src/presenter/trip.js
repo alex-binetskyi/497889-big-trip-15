@@ -2,7 +2,7 @@ import TripSortView from '../view/trip-sort.js';
 import TripEventListView from '../view/trip-events-list.js';
 import TripEventListEmptyView from '../view/trip-events-list-empty.js';
 import EventPresenter from './event.js';
-import { SortType } from '../const.js';
+import {SortType, UpdateType, UserAction} from '../const.js';
 import {sortByPrice, sortByTime} from '../utils/common.js';
 import {render, RenderPosition} from '../utils/render.js';
 
@@ -27,6 +27,7 @@ export default class Trip {
 
   init() {
     // Инициализация.
+    this._renderSort();
     this._renderBoard();
   }
 
@@ -48,6 +49,7 @@ export default class Trip {
 
     this._currentSortType = sortType;
     this._clearEventList();
+    this._clearEventList({resetSortType: true});
     this._renderEvents();
   }
 
@@ -61,25 +63,46 @@ export default class Trip {
   }
 
   _handleViewAction(actionType, updateType, update) {
-    console.log(actionType, updateType, update);
-    // Здесь будем вызывать обновление модели.
-    // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
-    // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
-    // update - обновленные данные
+    switch (actionType) {
+      case UserAction.UPDATE_TASK:
+        this._eventsModel.updateEvent(updateType, update);
+        break;
+      case UserAction.ADD_TASK:
+        this._eventsModel.addEvent(updateType, update);
+        break;
+      case UserAction.DELETE_TASK:
+        this._eventsModel.deleteEvent(updateType, update);
+        break;
+    }
   }
 
   _handleModelEvent(updateType, data) {
-    console.log(updateType, data);
-    // В зависимости от типа изменений решаем, что делать:
-    // - обновить часть списка (например, когда поменялось описание)
-    // - обновить список (например, когда задача ушла в архив)
-    // - обновить всю доску (например, при переключении фильтра)
+    switch (updateType) {
+      case UpdateType.PATCH:
+        this._pointPresenter.get(data.id).init(data);
+        break;
+      case UpdateType.MINOR:
+        this._clearEventList();
+        this._renderBoard();
+        break;
+      case UpdateType.MAJOR:
+        this._clearEventList({resetSortType: true});
+        this._renderBoard();
+        break;
+    }
   }
 
   _renderSort() {
-    // Рендер сортировки.
-    render(this._tripContainer, this._sortComponent, RenderPosition.BEFOREEND);
     this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
+
+    if (this._sortComponent !== null) {
+      this._sortComponent = null;
+    }
+
+    this._sortComponent = new TripSortView(this._currentSortType);
+    this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
+
+    render(this._tripContainer, this._sortComponent, RenderPosition.AFTERBEGIN);
   }
 
   _renderEvent(event) {
@@ -90,7 +113,7 @@ export default class Trip {
 
   _renderEvents() {
     // Рендер событий.
-    this._events.forEach((event) => this._renderEvent(event));
+    this._getEvents().forEach((event) => this._renderEvent(event));
   }
 
   _renderEventsList() {
@@ -105,7 +128,6 @@ export default class Trip {
 
   _renderBoard() {
     if(this._getEvents()) {
-      this._renderSort();
       this._renderEventsList();
       this._renderEvents();
     } else {
