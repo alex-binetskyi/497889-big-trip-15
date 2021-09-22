@@ -1,7 +1,4 @@
 import MenuView from './view/menu.js';
-import TripInfoSectionView from './view/trip-info-section.js';
-import TripInfoView from './view/trip-info.js';
-import TripCostView from './view/trip-cost.js';
 import StatsView from './view/stats.js';
 
 import TripPresenter from './presenter/trip.js';
@@ -11,7 +8,6 @@ import EventsModel from './model/events.js';
 import FilterModel from './model/filter.js';
 
 import {remove, render, RenderPosition } from './utils/render.js';
-import {reducer} from './utils/common.js';
 import {MenuItem, UpdateType} from './const.js';
 
 import Api from './api.js';
@@ -76,18 +72,3 @@ api.getPoints()
     render(siteControlsNavigation, MenuComponent, RenderPosition.BEFOREEND);
     MenuComponent.setMenuClickHandler(handleSiteMenuClick);
   });
-
-// api.getPoints().then((points) => {
-//   eventsModel.setEvents(points);
-//   dataEvents = points.slice();
-
-//   if(dataEvents.length > 0) {
-//     const siteTripMain = document.querySelector('.trip-main');
-//     render(siteTripMain, new TripInfoSectionView(), RenderPosition.AFTERBEGIN);
-//     const siteTripInfoSection = document.querySelector('.trip-info');
-//     const towns = dataEvents.map((event) => event['destination'].name);
-//     const price = dataEvents.map((event) => event['basePrice']).reduce(reducer);
-//     render(siteTripInfoSection, new TripInfoView(towns, dataEvents[0]['dateFrom'], dataEvents[dataEvents.length -1 ]['dateTo']), RenderPosition.BEFOREEND);
-//     render(siteTripInfoSection, new TripCostView(price), RenderPosition.BEFOREEND);
-//   }
-// });

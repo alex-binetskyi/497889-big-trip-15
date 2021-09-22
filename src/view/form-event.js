@@ -240,7 +240,7 @@ export default class FormEvent extends Smart {
           name: evt.target.value,
           pictures: selectedDestination.pictures,
         },
-      }, true);
+      });
     }
   }
 
