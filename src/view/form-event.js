@@ -208,7 +208,7 @@ export default class FormEvent extends Smart {
     this.updateData({
       type: value,
       offers: matchTypeOffers(value, eventOffers),
-    }, true);
+    });
   }
 
   _eventDestinationInputHandler(evt) {
