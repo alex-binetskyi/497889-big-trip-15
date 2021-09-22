@@ -91,5 +91,3 @@ api.getPoints()
 //     render(siteTripInfoSection, new TripCostView(price), RenderPosition.BEFOREEND);
 //   }
 // });
-
-// export {dataEvents};

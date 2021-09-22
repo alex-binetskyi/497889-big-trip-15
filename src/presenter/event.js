@@ -114,8 +114,6 @@ export default class EventPresenter {
   }
 
   _handleEditSubmit(update) {
-    // Проверяем, поменялись ли в задаче данные, которые попадают под фильтрацию,
-    // а значит требуют перерисовки списка - если таких нет, это PATCH-обновление
     const isDateFromEqual = isDatesEqual(this._event.dateFrom, update.dateFrom);
     const isDateToEqual = isDatesEqual(this._event.dateTo, update.dateTo);
     const isPriceEqual = this._event.basePrice === update.basePrice;
