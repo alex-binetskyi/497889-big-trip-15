@@ -1,46 +1,37 @@
-import { MOCK_EVENTS } from './mock/events.js';
-
 import MenuView from './view/menu.js';
-import TripInfoSectionView from './view/trip-info-section.js';
-import TripInfoView from './view/trip-info.js';
-import TripCostView from './view/trip-cost.js';
 import StatsView from './view/stats.js';
+
 import TripPresenter from './presenter/trip.js';
 import FilterPresenter from './presenter/filter.js';
+
 import EventsModel from './model/events.js';
 import FilterModel from './model/filter.js';
 
 import {remove, render, RenderPosition } from './utils/render.js';
-import {reducer} from './utils/common.js';
-import {MenuItem} from './const.js';
+import {MenuItem, UpdateType} from './const.js';
 
-const events = MOCK_EVENTS;
+import Api from './api.js';
+
+const AUTHORIZATION = 'Basic slvsrvmk74knc';
+const END_POINT = 'https://15.ecmascript.pages.academy/big-trip';
+
 const eventsModel = new EventsModel();
-eventsModel.setEvents(events);
-
 const filterModel = new FilterModel();
-const MenuComponent = new MenuView();
 
-const siteMainElement = document.querySelector('.page-body__page-main').querySelector('.page-body__container');
+const siteMainElement = document.querySelector('.page-body__page-main .page-body__container');
+
 const newEventBtnElement = document.querySelector('.trip-main__event-add-btn');
-let statsComponent = new StatsView();
 const siteControlsNavigation = document.querySelector('.trip-controls__navigation');
-render(siteControlsNavigation, MenuComponent, RenderPosition.BEFOREEND);
 const siteTripControlsFilters = document.querySelector('.trip-controls__filters');
 const siteTripEvents = document.querySelector('.trip-events');
+const MenuComponent = new MenuView();
 
-if(events.length > 0) {
-  const siteTripMain = document.querySelector('.trip-main');
-  render(siteTripMain, new TripInfoSectionView(), RenderPosition.AFTERBEGIN);
-  const siteTripInfoSection = document.querySelector('.trip-info');
-  const towns = events.map((event) => event['destination'].name);
-  const price = events.map((event) => event['basePrice']).reduce(reducer);
-  render(siteTripInfoSection, new TripInfoView(towns, events[0]['dateFrom'], events[events.length -1 ]['dateTo']), RenderPosition.BEFOREEND);
-  render(siteTripInfoSection, new TripCostView(price), RenderPosition.BEFOREEND);
-}
+const api = new Api(END_POINT, AUTHORIZATION);
 
-const trip = new TripPresenter(siteTripEvents, eventsModel, filterModel);
+const trip = new TripPresenter(siteTripEvents, eventsModel, filterModel, api);
 const filter = new FilterPresenter(siteTripControlsFilters, filterModel, eventsModel);
+
+let statsComponent = null;
 
 const handleSiteMenuClick = (menuItem) => {
   switch (menuItem) {
@@ -55,13 +46,12 @@ const handleSiteMenuClick = (menuItem) => {
       MenuComponent.getElement().querySelector('#menu_stats').classList.add('trip-tabs__btn--active');
       MenuComponent.getElement().querySelector('#menu_table').classList.remove('trip-tabs__btn--active');
       trip.destroy();
-      statsComponent = new StatsView(events);
+      statsComponent = new StatsView(eventsModel.getEvents());
       render(siteMainElement, statsComponent, RenderPosition.BEFOREEND);
       break;
   }
 };
 
-MenuComponent.setMenuClickHandler(handleSiteMenuClick);
 
 newEventBtnElement.addEventListener('click', (evt) => {
   evt.preventDefault();
@@ -70,3 +60,15 @@ newEventBtnElement.addEventListener('click', (evt) => {
 
 filter.init();
 trip.init();
+
+api.getPoints()
+  .then((events) => {
+    eventsModel.setEvents(UpdateType.INIT, events);
+    render(siteControlsNavigation, MenuComponent, RenderPosition.BEFOREEND);
+    MenuComponent.setMenuClickHandler(handleSiteMenuClick);
+  })
+  .catch(() => {
+    eventsModel.setEvents(UpdateType.INIT, []);
+    render(siteControlsNavigation, MenuComponent, RenderPosition.BEFOREEND);
+    MenuComponent.setMenuClickHandler(handleSiteMenuClick);
+  });

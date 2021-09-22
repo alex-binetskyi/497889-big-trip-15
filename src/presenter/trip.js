@@ -1,6 +1,7 @@
 import TripSortView from '../view/trip-sort.js';
 import TripEventListView from '../view/trip-events-list.js';
 import TripEventListEmptyView from '../view/trip-events-list-empty.js';
+import LoadingView from '../view/loading.js';
 import EventPresenter from './event.js';
 import EventNewPresenter from './event-new.js';
 import {SortType, UpdateType, UserAction, FilterType} from '../const.js';
@@ -9,7 +10,7 @@ import {render, RenderPosition, remove} from '../utils/render.js';
 import {filter} from '../utils/filter.js';
 
 export default class Trip {
-  constructor(tripContainer, eventsModel, filterModel) {
+  constructor(tripContainer, eventsModel, filterModel, api) {
     this._tripContainer = tripContainer; // siteTripEvents?
     this._eventPresenter = new Map();
 
@@ -20,9 +21,12 @@ export default class Trip {
     this._sortComponent = new TripSortView();
     this._eventsListComponent = new TripEventListView();
     this._emptyEventsListComponent = new TripEventListEmptyView();
+    this._loadingComponent = new LoadingView();
 
     this._filterType = FilterType.EVERYTHING;
     this._currentSortType = SortType.DAY;
+    this._isLoading = true;
+    this._api = api;
 
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
@@ -89,6 +93,8 @@ export default class Trip {
     this._eventPresenter.forEach((presenter) => presenter.destroy());
     this._eventPresenter.clear();
 
+    remove(this._loadingComponent);
+
     if (this._emptyEventsListComponent) {
       remove(this._emptyEventsListComponent);
     }
@@ -102,7 +108,9 @@ export default class Trip {
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
-        this._eventsModel.updateEvent(updateType, update);
+        this._api.updatePoint(update).then((response) => {
+          this._eventsModel.updateEvent(updateType, response);
+        });
         break;
       case UserAction.ADD_POINT:
         this._eventsModel.addEvent(updateType, update);
@@ -116,7 +124,7 @@ export default class Trip {
   _handleModelEvent(updateType, data) {
     switch (updateType) {
       case UpdateType.PATCH:
-        this._pointPresenter.get(data.id).init(data);
+        this._eventPresenter.get(data.id).init(data);
         break;
       case UpdateType.MINOR:
         this._clearEventList();
@@ -126,7 +134,16 @@ export default class Trip {
         this._clearEventList({resetSortType: true});
         this._renderBoard();
         break;
+      case UpdateType.INIT:
+        this._isLoading = false;
+        remove(this._loadingComponent);
+        this._renderBoard();
+        break;
     }
+  }
+
+  _renderLoading() {
+    render(this._tripContainer, this._loadingComponent, RenderPosition.BEFOREEND);
   }
 
   _renderSort() {
@@ -165,6 +182,11 @@ export default class Trip {
   }
 
   _renderBoard() {
+    if (this._isLoading) {
+      this._renderLoading();
+      return;
+    }
+
     if(this._getEvents().length > 0) {
       this._renderEventsList();
       this._renderEvents();

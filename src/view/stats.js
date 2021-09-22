@@ -1,22 +1,15 @@
-import Smart from './smart.js';
+import SmartView from './smart.js';
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import {getTimeFormat, countMoneyByType, countTimeByType, countPointsTypes, getSortType} from '../utils/stats.js';
-import {MOCK_EVENTS as events} from '../mock/events.js';
 
-// Рассчитаем высоту канваса в зависимости от того, сколько данных в него будет передаваться
 const BAR_HEIGHT = 55;
 
-const typesPrice = getSortType(countMoneyByType(events));
-const typesTime = getSortType(countTimeByType(events));
-const sortType = getSortType(countPointsTypes(events));
+const renderMoneyChart = (moneyCtx, events) => {
+  const typesPrice = getSortType(countMoneyByType(events));
+  const sumPriceFromType = Object.values(countMoneyByType(events)).sort((a, b) => b - a);
 
-const sumPriceFromType = Object.values(countMoneyByType(events)).sort((a, b) => b - a);
-const sumTimeFromType = Object.values(countTimeByType(events)).sort((a, b) => b - a);
-const quantityType = Object.values(countPointsTypes(events)).sort((a, b) => b - a);
-
-const generateMoneyChart = (moneyCtx) =>
-  (new Chart(moneyCtx, {
+  return new Chart(moneyCtx, {
     plugins: [ChartDataLabels],
     type: 'horizontalBar',
     data: {
@@ -79,10 +72,14 @@ const generateMoneyChart = (moneyCtx) =>
         enabled: false,
       },
     },
-  }));
+  });
+};
 
-const generateTimeSpendChart = (timeCtx) =>
-  (new Chart(timeCtx, {
+const renderTimeSpendChart = (timeCtx, points) => {
+  const typesTime = getSortType(countTimeByType(points));
+  const sumTimeFromType = Object.values(countTimeByType(points)).sort((a, b) => b - a);
+
+  return new Chart(timeCtx, {
     plugins: [ChartDataLabels],
     type: 'horizontalBar',
     data: {
@@ -145,9 +142,13 @@ const generateTimeSpendChart = (timeCtx) =>
         enabled: false,
       },
     },
-  }));
+  });
+};
 
-const generateTypeChart = (typeCtx) => (
+const renderTypeChart = (typeCtx, points) => {
+  const sortType = getSortType(countPointsTypes(points));
+  const quantityType = Object.values(countPointsTypes(points)).sort((a, b) => b - a);
+
   new Chart(typeCtx, {
     plugins: [ChartDataLabels],
     type: 'horizontalBar',
@@ -211,7 +212,8 @@ const generateTypeChart = (typeCtx) => (
         enabled: false,
       },
     },
-  }));
+  });
+};
 
 const createStatisticsTemplate = () => (
   `<section class="statistics">
@@ -228,10 +230,10 @@ const createStatisticsTemplate = () => (
   </section>`
 );
 
-export default class Statistics extends Smart {
-  constructor(data) {
+export default class Statistics extends SmartView {
+  constructor(events) {
     super();
-    this._data = data;
+    this._data = events;
     this._moneyChart = null;
     this._typeChart = null;
     this._timeChart = null;
@@ -252,6 +254,8 @@ export default class Statistics extends Smart {
   }
 
   _setCharts() {
+    const events = this._data;
+
     const moneyCtx = this.getElement().querySelector('#money');
     const typeCtx = this.getElement().querySelector('#type');
     const timeCtx = this.getElement().querySelector('#time-spend');
@@ -260,8 +264,8 @@ export default class Statistics extends Smart {
     typeCtx.height = BAR_HEIGHT * 5;
     timeCtx.height = BAR_HEIGHT * 5;
 
-    this._moneyChart = generateMoneyChart(moneyCtx, this._data);
-    this._typeChart = generateTypeChart(typeCtx, this._data);
-    this._timeChart = generateTimeSpendChart(timeCtx, this._data);
+    this._moneyChart = renderMoneyChart(moneyCtx, events);
+    this._timeChart = renderTimeSpendChart(typeCtx, this._data);
+    this._typeChart = renderTypeChart(timeCtx, this._data);
   }
 }
