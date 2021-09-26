@@ -19,9 +19,9 @@ export const getTimeFormat = (milliseconds) => {
 
 export const countPointsTypes = (events) => {
   let result = null;
-  result = Object.fromEntries(events.map((point) => [point.type, 0]));
-  events.forEach((point) => {
-    result[point.type] += 1;
+  result = Object.fromEntries(events.map((event) => [event.type, 0]));
+  events.forEach((event) => {
+    result[event.type] += 1;
   });
   return result;
 };

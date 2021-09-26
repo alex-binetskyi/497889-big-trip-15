@@ -9,14 +9,15 @@ const createMenuTemplate = () => (
 );
 
 export default class Menu extends AbstractView {
-  constructor() {
+  constructor(events) {
     super();
+    this._events = events;
 
     this._menuClickHandler = this._menuClickHandler.bind(this);
   }
 
   getTemplate() {
-    return createMenuTemplate();
+    return createMenuTemplate(this._events);
   }
 
   _menuClickHandler(evt) {
@@ -30,10 +31,9 @@ export default class Menu extends AbstractView {
   }
 
   setMenuItem(menuItem) {
-    const item = this.getElement().querySelector(`#site-menu-${menuItem}`);
-
-    if (item !== null) {
-      item.classList.add('trip-tabs__btn--active');
-    }
+    const items = this.getElement().querySelectorAll('.trip-tabs__btn');
+    items.forEach((item) => {
+      (item.id === menuItem) ? item.classList.add('trip-tabs__btn--active') : item.classList.remove('trip-tabs__btn--active');
+    });
   }
 }

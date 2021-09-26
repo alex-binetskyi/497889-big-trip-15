@@ -19,7 +19,7 @@ export default class Events extends AbstractObserver {
     const index = this._events.findIndex((event) => event.id === update.id);
 
     if (index === -1) {
-      throw new Error('Can\'t update unexisting task');
+      return this._events;
     }
 
     this._events = [
@@ -55,45 +55,43 @@ export default class Events extends AbstractObserver {
     this._notify(updateType);
   }
 
-  static adaptToClient(point) {
-    const adaptedPoint = Object.assign(
+  static adaptToClient(event) {
+    const adaptedEvent = Object.assign(
       {},
-      point,
+      event,
       {
-        basePrice: point['base_price'],
-        isFavorite: point['is_favorite'],
-        dateFrom: point['date_from'],
-        dateTo: point['date_to'],
+        basePrice: event['base_price'],
+        isFavorite: event['is_favorite'],
+        dateFrom: event['date_from'],
+        dateTo: event['date_to'],
       },
     );
 
-    // Ненужные ключи мы удаляем
-    delete adaptedPoint['base_price'];
-    delete adaptedPoint['is_favorite'];
-    delete adaptedPoint['date_from'];
-    delete adaptedPoint['date_to'];
+    delete adaptedEvent['base_price'];
+    delete adaptedEvent['is_favorite'];
+    delete adaptedEvent['date_from'];
+    delete adaptedEvent['date_to'];
 
-    return adaptedPoint;
+    return adaptedEvent;
   }
 
-  static adaptToServer(point) {
-    const adaptedPoint = Object.assign(
+  static adaptToServer(event) {
+    const adaptedEvent = Object.assign(
       {},
-      point,
+      event,
       {
-        'base_price': point.basePrice,
-        'is_favorite': point.isFavorite,
-        'date_from': point.dateFrom,
-        'date_to': point.dateTo,
+        'base_price': event.basePrice,
+        'is_favorite': event.isFavorite,
+        'date_from': event.dateFrom,
+        'date_to': event.dateTo,
       },
     );
 
-    // Ненужные ключи мы удаляем
-    delete adaptedPoint.basePrice;
-    delete adaptedPoint.isFavorite;
-    delete adaptedPoint.dateFrom;
-    delete adaptedPoint.dateTo;
+    delete adaptedEvent.basePrice;
+    delete adaptedEvent.isFavorite;
+    delete adaptedEvent.dateFrom;
+    delete adaptedEvent.dateTo;
 
-    return adaptedPoint;
+    return adaptedEvent;
   }
 }

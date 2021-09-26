@@ -1,14 +1,17 @@
-import TripEventView from '../view/trip-event.js';
+import TripEventView from '../view/event.js';
 import FormEventView from '../view/form-event.js';
-
 import {render, RenderPosition, replace, remove} from '../utils/render.js';
 import {UserAction, UpdateType} from '../const.js';
-
-import {isDatesEqual} from '../utils/event.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
   EDITING: 'EDITING',
+};
+
+export const State = {
+  SAVING: 'SAVING',
+  DELETING: 'DELETING',
+  ABORTING: 'ABORTING',
 };
 
 export default class EventPresenter {
@@ -17,45 +20,44 @@ export default class EventPresenter {
     this._changeData = changeData;
     this._changeMode = changeMode;
 
-    this._pointComponent = null;
-    this._pointEditComponent = null;
+    this._eventComponent = null;
+    this._eventEditComponent = null;
     this._mode = Mode.DEFAULT;
 
+    this._onEscKeyDown = this._onEscKeyDown.bind(this);
+    this._handleEditClick = this._handleEditClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
-    this._replaceEventToForm = this._replaceEventToForm.bind(this);
-    this._replaceFormToEvent = this._replaceFormToEvent.bind(this);
-    this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
-    this._handleEditClickRollup = this._handleEditClickRollup.bind(this);
-    this._handleEditSubmit = this._handleEditSubmit.bind(this);
+    this._handlePointClick = this._handlePointClick.bind(this);
+    this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._handleDeleteClick = this._handleDeleteClick.bind(this);
   }
 
-  init(event) {
-    this._event = event; // Событие - объект данных.
+  init(event, offers, destinations) {
+    this._event = event;
+    const prevPointComponent = this._eventComponent;
+    const prevPointEditComponent = this._eventEditComponent;
 
-    const prevPointComponent = this._pointComponent;
-    const prevPointEditComponent = this._pointEditComponent;
+    this._eventComponent = new TripEventView(event);
+    this._eventEditComponent = new FormEventView({event, offers, destinations});
 
-    this._pointComponent = new TripEventView(event); // Отображение события.
-    this._pointEditComponent = new FormEventView(event); // Форма изменения события.
-
-    this._pointComponent.setEditClickHandler(this._replaceEventToForm);
-    this._pointEditComponent.setEditClickHandler(this._handleEditClickRollup);
-    this._pointEditComponent.setEditSubmitHandler(this._handleEditSubmit);
-    this._pointEditComponent.setDeleteClickHandler(this._handleDeleteClick);
-    this._pointComponent.setFavoriteClickHandler(this._handleFavoriteClick);
+    this._eventComponent.setEditClickHandler(this._handleEditClick);
+    this._eventComponent.setFavoriteClickHandler(this._handleFavoriteClick);
+    this._eventEditComponent.setCloseClickHandler(this._handlePointClick);
+    this._eventEditComponent.setSubmitClickHandler(this._handleFormSubmit);
+    this._eventEditComponent.setDeleteClickHandler(this._handleDeleteClick);
 
     if (prevPointComponent === null || prevPointEditComponent === null) {
-      render(this._container, this._pointComponent, RenderPosition.BEFOREEND);
+      render(this._container, this._eventComponent, RenderPosition.BEFOREEND);
       return;
     }
 
     if (this._mode === Mode.DEFAULT) {
-      replace(this._pointComponent, prevPointComponent);
+      replace(this._eventComponent, prevPointComponent);
     }
 
     if (this._mode === Mode.EDITING) {
-      replace(this._pointEditComponent, prevPointEditComponent);
+      replace(this._eventEditComponent, prevPointEditComponent);
+      this.mode === Mode.DEFAULT;
     }
 
     remove(prevPointComponent);
@@ -63,8 +65,8 @@ export default class EventPresenter {
   }
 
   destroy() {
-    remove(this._pointComponent);
-    remove(this._pointEditComponent);
+    remove(this._eventComponent);
+    remove(this._eventEditComponent);
   }
 
   resetView() {
@@ -73,35 +75,55 @@ export default class EventPresenter {
     }
   }
 
+  setViewState(state) {
+    if (this._mode === Mode.DEFAULT) {
+      return;
+    }
+
+    const resetFormState = () => {
+      this._eventEditComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    switch(state) {
+      case State.SAVING:
+        this._eventEditComponent.updateData({
+          isDisabled: true,
+          isSaving: true,
+        });
+        break;
+      case State.DELETING:
+        this._eventEditComponent.updateData({
+          isDisabled: true,
+          isDeleting: true,
+        });
+        break;
+      case State.ABORTING:
+        this._eventComponent.shake(resetFormState);
+        this._eventEditComponent.shake(resetFormState);
+        break;
+    }
+  }
+
   _replaceEventToForm() {
-    replace(this._pointEditComponent, this._pointComponent);
-    document.addEventListener('keydown', this._escKeyDownHandler);
+    replace(this._eventEditComponent, this._eventComponent);
+    document.addEventListener('keydown', this._onEscKeyDown);
     this._changeMode();
     this._mode = Mode.EDITING;
   }
 
   _replaceFormToEvent() {
-    replace(this._pointComponent, this._pointEditComponent);
-    document.removeEventListener('keydown', this._escKeyDownHandler);
+    replace(this._eventComponent, this._eventEditComponent);
+    document.removeEventListener('keydown', this._onEscKeyDown);
     this._mode = Mode.DEFAULT;
-  }
-
-  _handleEditClickRollup() {
-    this._pointEditComponent.reset(this._event);
-    this._replaceFormToEvent();
-  }
-
-  _escKeyDownHandler(evt) {
-    if (evt.key === 'Escape' || evt.key === 'Esc') {
-      evt.preventDefault();
-      this._pointEditComponent.reset(this._event);
-      this._replaceFormToEvent();
-    }
   }
 
   _handleFavoriteClick() {
     this._changeData(
-      UserAction.UPDATE_POINT,
+      UserAction.UPDATE_EVENT,
       UpdateType.MINOR,
       Object.assign(
         {},
@@ -113,25 +135,34 @@ export default class EventPresenter {
     );
   }
 
-  _handleEditSubmit(update) {
-    const isDateFromEqual = isDatesEqual(this._event.dateFrom, update.dateFrom);
-    const isDateToEqual = isDatesEqual(this._event.dateTo, update.dateTo);
-    const isPriceEqual = this._event.basePrice === update.basePrice;
-    const isDestinationEqual = this._event.destination.name === update.destination.name;
+  _onEscKeyDown(evt) {
+    if (evt.key === 'Escape' || evt.key === 'Esc') {
+      evt.preventDefault();
+      this._eventEditComponent.reset(this._event);
+      this._replaceFormToEvent();
+    }
+  }
 
-    const isMinorUpdate = !isDateFromEqual || !isDateToEqual || !isPriceEqual || !isDestinationEqual;
+  _handleEditClick() {
+    this._replaceEventToForm();
+  }
 
-    this._changeData(
-      UserAction.UPDATE_POINT,
-      isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
-      update,
-    );
+  _handlePointClick() {
+    this._eventEditComponent.reset(this._event);
     this._replaceFormToEvent();
   }
 
   _handleDeleteClick(event) {
     this._changeData(
-      UserAction.DELETE_POINT,
+      UserAction.DELETE_EVENT,
+      UpdateType.MINOR,
+      event,
+    );
+  }
+
+  _handleFormSubmit(event) {
+    this._changeData(
+      UserAction.UPDATE_EVENT,
       UpdateType.MINOR,
       event,
     );

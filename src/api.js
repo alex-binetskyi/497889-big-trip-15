@@ -1,14 +1,12 @@
-import EventsModel from './model/events.js';
+import EventsModel from './model/events';
 
 const Method = {
   GET: 'GET',
   PUT: 'PUT',
+  POST: 'POST',
+  DELETE: 'DELETE',
 };
 
-const SuccessHTTPStatusRange = {
-  MIN: 200,
-  MAX: 299,
-};
 
 export default class Api {
   constructor(endPoint, authorization) {
@@ -16,21 +14,49 @@ export default class Api {
     this._authorization = authorization;
   }
 
-  getPoints() {
+  getEvents() {
     return this._load({url: 'points'})
       .then(Api.toJSON)
       .then((points) => points.map(EventsModel.adaptToClient));
   }
 
-  updatePoint(point) {
+  getOffers() {
+    return this._load({url: 'offers'})
+      .then(Api.toJSON);
+  }
+
+  getDestinations() {
+    return this._load({url: 'destinations'})
+      .then(Api.toJSON);
+  }
+
+  updateEvent(event) {
     return this._load({
-      url: `points/${point.id}`,
+      url: `points/${event.id}`,
       method: Method.PUT,
-      body: JSON.stringify(EventsModel.adaptToServer(point)),
+      body: JSON.stringify(EventsModel.adaptToServer(event)),
+      headers: new Headers({'Content-Type' : 'application/json'}),
+    })
+      .then(Api.toJSON)
+      .then(EventsModel.adaptToClient);
+  }
+
+  addEvent(event) {
+    return this._load({
+      url: 'points',
+      method: Method.POST,
+      body: JSON.stringify(EventsModel.adaptToServer(event)),
       headers: new Headers({'Content-Type': 'application/json'}),
     })
       .then(Api.toJSON)
       .then(EventsModel.adaptToClient);
+  }
+
+  deleteEvent(event) {
+    return this._load({
+      url: `points/${event.id}`,
+      method: Method.DELETE,
+    });
   }
 
   _load({
@@ -50,13 +76,9 @@ export default class Api {
   }
 
   static checkStatus(response) {
-    if (
-      response.status < SuccessHTTPStatusRange.MIN ||
-      response.status > SuccessHTTPStatusRange.MAX
-    ) {
-      throw new Error(`${response.status}: ${response.statusText}`);
+    if (!response.ok) {
+      throw new Error (`${response.status}: ${response.statusText}`);
     }
-
     return response;
   }
 

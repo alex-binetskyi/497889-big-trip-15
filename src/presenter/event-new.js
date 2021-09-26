@@ -12,19 +12,19 @@ export default class EventNew {
 
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._handleDeleteClick = this._handleDeleteClick.bind(this);
-    this._handleCloseButtonClick = this._handleCloseButtonClick.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
 
-  init() {
+  init(offers, destinations, callback) {
     if (this._eventEditComponent !== null) {
       return;
     }
 
-    this._eventEditComponent = new FormEventView();
-    this._eventEditComponent.setEditSubmitHandler(this._handleFormSubmit);
+    this._destroyCallback = callback;
+
+    this._eventEditComponent = new FormEventView({offers, destinations});
+    this._eventEditComponent.setSubmitClickHandler(this._handleFormSubmit);
     this._eventEditComponent.setDeleteClickHandler(this._handleDeleteClick);
-    this._eventEditComponent.setEditClickHandler(this._handleCloseButtonClick);
 
     render(this._container, this._eventEditComponent, RenderPosition.AFTERBEGIN);
 
@@ -46,20 +46,34 @@ export default class EventNew {
     document.removeEventListener('keydown', this._escKeyDownHandler);
   }
 
+  setSaving() {
+    this._eventEditComponent.updateData({
+      isDisabled: true,
+      isSaving: true,
+    });
+  }
+
+  setAborting() {
+    const resetFormState = () => {
+      this._eventEditComponent.updateData({
+        isDisabled: false,
+        isDeleting: false,
+        isSaving: false,
+      });
+    };
+
+    this._eventEditComponent.shake(resetFormState);
+  }
+
   _handleFormSubmit(event) {
     this._changeData(
-      UserAction.ADD_POINT,
+      UserAction.ADD_EVENT,
       UpdateType.MINOR,
-      Object.assign(event),
+      event,
     );
-    this.destroy();
   }
 
   _handleDeleteClick() {
-    this.destroy();
-  }
-
-  _handleCloseButtonClick() {
     this.destroy();
   }
 

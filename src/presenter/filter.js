@@ -1,6 +1,7 @@
-import FilterView from '../view/trip-filters.js';
+import FilterView from '../view/filters.js';
 import {render, RenderPosition, replace, remove} from '../utils/render.js';
 import {FilterType, UpdateType} from '../const.js';
+import { filter } from '../utils/filter';
 
 export default class Filter {
   constructor(filterContainer, filterModel, eventsModel) {
@@ -46,18 +47,20 @@ export default class Filter {
   }
 
   _getFilters() {
+    const events = this._eventsModel.getEvents();
+
     return [
       {
         type: FilterType.EVERYTHING,
-        name: 'everything',
+        count: filter[FilterType.EVERYTHING](events).length,
       },
       {
         type: FilterType.FUTURE,
-        name: 'future',
+        count: filter[FilterType.FUTURE](events).length,
       },
       {
         type: FilterType.PAST,
-        name: 'past',
+        count: filter[FilterType.PAST](events).length,
       },
     ];
   }

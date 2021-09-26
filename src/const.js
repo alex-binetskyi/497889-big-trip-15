@@ -9,15 +9,32 @@ export const TIME = {
 export const TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
 export const SortType = {
-  DAY: 'day',
-  TIME: 'time',
-  PRICE: 'price',
+  DAY: {
+    name: 'day',
+    disabled: false,
+  },
+  EVENT: {
+    name: 'event',
+    disabled: true,
+  },
+  TIME: {
+    name: 'time',
+    disabled: false,
+  },
+  PRICE: {
+    name: 'price',
+    disabled: false,
+  },
+  OFFERS: {
+    name: 'offers',
+    disabled: true,
+  },
 };
 
 export const UserAction = {
-  UPDATE_POINT: 'UPDATE_POINT',
-  ADD_POINT: 'ADD_POINT',
-  DELETE_POINT: 'DELETE_POINT',
+  UPDATE_EVENT: 'UPDATE_EVENT',
+  ADD_EVENT: 'ADD_EVENT',
+  DELETE_EVENT: 'DELETE_EVENT',
 };
 
 export const UpdateType = {
@@ -34,7 +51,6 @@ export const FilterType = {
 };
 
 export const MenuItem = {
-  ADD_NEW_POINT: 'menu_add_new_point',
   TABLE: 'menu_table',
   STATS: 'menu_stats',
 };
