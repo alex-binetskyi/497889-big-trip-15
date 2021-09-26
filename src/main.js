@@ -15,10 +15,9 @@ import {MenuItem, UpdateType} from './const.js';
 import Api from './api.js';
 
 const AUTHORIZATION = 'Basic dk43453lcdsgrd';
-const END_POINT = 'https://15.ecmascript.pages.academy/big-trip';
+const END_EVENT = 'https://15.ecmascript.pages.academy/big-trip';
 
-const api = new Api(END_POINT, AUTHORIZATION);
-
+const api = new Api(END_EVENT, AUTHORIZATION);
 
 const destinationsModel = new DestinationModel();
 const eventsModel = new EventsModel();
@@ -38,7 +37,7 @@ const MenuComponent = new MenuView(eventsModel.getEvents());
 render(siteMenuContainer, MenuComponent, RenderPosition.BEFOREEND);
 
 newEventButtonElement.disabled = true;
-const handlePointNewFormClose = () => {
+const handleEventNewFormClose = () => {
   newEventButtonElement.disabled = false;
 };
 
@@ -76,7 +75,7 @@ trip.init();
 newEventButtonElement.addEventListener('click', (evt) => {
   evt.preventDefault();
   newEventButtonElement.disabled = true;
-  trip.createEvent(handlePointNewFormClose);
+  trip.createEvent(handleEventNewFormClose);
 });
 
 Promise.all([

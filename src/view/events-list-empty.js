@@ -16,7 +16,7 @@ const createTripEventsListEmptyTemplate = (filterType) => {
     </p>`);
 };
 
-export default class NoPoint extends AbstractView {
+export default class NoEvent extends AbstractView {
   constructor(data) {
     super();
     this._data = data;

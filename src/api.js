@@ -9,15 +9,15 @@ const Method = {
 
 
 export default class Api {
-  constructor(endPoint, authorization) {
-    this._endPoint = endPoint;
+  constructor(endEvent, authorization) {
+    this._endEvent = endEvent;
     this._authorization = authorization;
   }
 
   getEvents() {
     return this._load({url: 'points'})
       .then(Api.toJSON)
-      .then((points) => points.map(EventsModel.adaptToClient));
+      .then((events) => events.map(EventsModel.adaptToClient));
   }
 
   getOffers() {
@@ -68,7 +68,7 @@ export default class Api {
     headers.append('Authorization', this._authorization);
 
     return fetch(
-      `${this._endPoint}/${url}`,
+      `${this._endEvent}/${url}`,
       {method, body, headers},
     )
       .then(Api.checkStatus)

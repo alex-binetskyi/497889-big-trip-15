@@ -27,41 +27,41 @@ export default class EventPresenter {
     this._onEscKeyDown = this._onEscKeyDown.bind(this);
     this._handleEditClick = this._handleEditClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
-    this._handlePointClick = this._handlePointClick.bind(this);
+    this._handleEventClick = this._handleEventClick.bind(this);
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._handleDeleteClick = this._handleDeleteClick.bind(this);
   }
 
   init(event, offers, destinations) {
     this._event = event;
-    const prevPointComponent = this._eventComponent;
-    const prevPointEditComponent = this._eventEditComponent;
+    const prevEventComponent = this._eventComponent;
+    const prevEventEditComponent = this._eventEditComponent;
 
     this._eventComponent = new TripEventView(event);
     this._eventEditComponent = new FormEventView({event, offers, destinations});
 
     this._eventComponent.setEditClickHandler(this._handleEditClick);
     this._eventComponent.setFavoriteClickHandler(this._handleFavoriteClick);
-    this._eventEditComponent.setCloseClickHandler(this._handlePointClick);
+    this._eventEditComponent.setCloseClickHandler(this._handleEventClick);
     this._eventEditComponent.setSubmitClickHandler(this._handleFormSubmit);
     this._eventEditComponent.setDeleteClickHandler(this._handleDeleteClick);
 
-    if (prevPointComponent === null || prevPointEditComponent === null) {
+    if (prevEventComponent === null || prevEventEditComponent === null) {
       render(this._container, this._eventComponent, RenderPosition.BEFOREEND);
       return;
     }
 
     if (this._mode === Mode.DEFAULT) {
-      replace(this._eventComponent, prevPointComponent);
+      replace(this._eventComponent, prevEventComponent);
     }
 
     if (this._mode === Mode.EDITING) {
-      replace(this._eventEditComponent, prevPointEditComponent);
+      replace(this._eventEditComponent, prevEventEditComponent);
       this.mode === Mode.DEFAULT;
     }
 
-    remove(prevPointComponent);
-    remove(prevPointEditComponent);
+    remove(prevEventComponent);
+    remove(prevEventEditComponent);
   }
 
   destroy() {
@@ -147,7 +147,7 @@ export default class EventPresenter {
     this._replaceEventToForm();
   }
 
-  _handlePointClick() {
+  _handleEventClick() {
     this._eventEditComponent.reset(this._event);
     this._replaceFormToEvent();
   }

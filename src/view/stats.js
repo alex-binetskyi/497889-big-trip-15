@@ -1,7 +1,7 @@
 import SmartView from './smart.js';
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import {getTimeFormat, countMoneyByType, countTimeByType, countPointsTypes, getSortType} from '../utils/stats.js';
+import {getTimeFormat, countMoneyByType, countTimeByType, countEventsTypes, getSortType} from '../utils/stats.js';
 
 const BAR_HEIGHT = 55;
 
@@ -146,8 +146,8 @@ const renderTimeSpendChart = (timeCtx, points) => {
 };
 
 const renderTypeChart = (typeCtx, points) => {
-  const sortType = getSortType(countPointsTypes(points));
-  const quantityType = Object.values(countPointsTypes(points)).sort((a, b) => b - a);
+  const sortType = getSortType(countEventsTypes(points));
+  const quantityType = Object.values(countEventsTypes(points)).sort((a, b) => b - a);
 
   new Chart(typeCtx, {
     plugins: [ChartDataLabels],

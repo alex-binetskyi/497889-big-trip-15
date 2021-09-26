@@ -17,7 +17,7 @@ export const getTimeFormat = (milliseconds) => {
   return `${hours}H ${minutes}m`;
 };
 
-export const countPointsTypes = (events) => {
+export const countEventsTypes = (events) => {
   let result = null;
   result = Object.fromEntries(events.map((event) => [event.type, 0]));
   events.forEach((event) => {

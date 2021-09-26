@@ -26,11 +26,10 @@ const createTripEventTemplate = (event) => {
   if(getTimeWay.replace(/\s/g, '') === '') {
     getTimeWay = '0M';
   }
-  //проверка на фаворитность
+
   const checkFavorite = () => isFavorite ? 'event__favorite-btn--active' : '';
 
-  //генерация дополнительных опций
-  const offersPoint = offers.map(({title, price}) => (
+  const offersEvent = offers.map(({title, price}) => (
     `<li class="event__offer">
     <span class="event__offer-title">${title}</span>
     &plus;&euro;&nbsp;
@@ -58,7 +57,7 @@ const createTripEventTemplate = (event) => {
     </p>
     <h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">
-      ${offersPoint}
+      ${offersEvent}
     </ul>
     <button class="event__favorite-btn ${checkFavorite()}" type="button">
       <span class="visually-hidden">Add to favorite</span>

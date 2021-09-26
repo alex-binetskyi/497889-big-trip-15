@@ -38,14 +38,12 @@ const createContentButton = (isNewEvent, isDeleting) => {
   return `${isNewEvent ? 'Cancel' : editButton}`;
 };
 
-//генерация опций города
 const createCityList = (destinations) => (
   destinations.map(({name}) => (
     `<option value="${name}"></option>`
   )).join('')
 );
 
-//генерация тайп-листа
 const createEventTypeList = (offers, id) => (
   offers.map(({type}) => `<div class="event__type-item">
       <input id="event-type-${type}-${id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">
